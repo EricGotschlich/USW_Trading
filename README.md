@@ -34,7 +34,7 @@ Implement trading strategy in Alpaca, that enters positions at predicted entry p
 ---
 
 ## Data Acquisition
-Retrieves raw market data for Nasdaq-100 symbols 
+Retrieves raw market data and the 10 most recent news articles for Nasdaq-100 symbols 
 
 **Script**
 
@@ -45,5 +45,14 @@ Pulls **1‑minute** bars  from **2020‑01‑01 → 2025‑11‑21** and writes
 
 Bar data AAPL example:
 
-<<img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />
->
+<<img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />>
+
+[scripts/news_sentiment_score.py](scripts/news_sentiment_score.py)
+
+Calculates the sentiment score of recent news regarding each stock and creates `data/processed/nasdaq_news_with_sentiment.parquet` file.
+
+Sentiment score AAPL example:
+
+<img width="1266" height="697" alt="image" src="https://github.com/user-attachments/assets/a7f688a7-1021-47f4-aa78-4732f7ee627c" />
+
+
