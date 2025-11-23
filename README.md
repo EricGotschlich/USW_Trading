@@ -3,7 +3,7 @@
 Problem Definition:
 Target
 
-Prediction of 60 minute trend direction for NASDAQ-100 stocks during regular US trading hours. For every NASDAQ-100 stock and every 1-minute bar between 2020-01-01 and 2025-01-01 we compute the target as the normalized linear regression slope of the stock’s future 60-minute close-price window, where the slope is normalized by the mean price in that window.
+Prediction of 60 minute trend direction for NASDAQ-100 stocks during regular US trading hours. For every NASDAQ-100 stock and every 1-minute bar between 2020-01-01 and 2025-11-21 we compute the target as the normalized linear regression slope of the stock’s future 60-minute close-price window, where the slope is normalized by the mean price in that window.
 
 
 -Normalized intraday OHLCV (open, high, low, close, volume) at 1-minute frequency and corresponding log returns
