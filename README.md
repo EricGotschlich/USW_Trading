@@ -45,7 +45,7 @@ Pulls **1‑minute** bars  from **2020‑01‑01 → 2025‑11‑21** and writes
 
 Bar data AAPL example:
 
-<<img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />>
+<img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />
 
 [scripts/news_sentiment_score.py](scripts/news_sentiment_score.py)
 
