@@ -30,3 +30,20 @@ Implement trading strategy in Alpaca, that enters positions at predicted entry p
 
 
 -We hope to find that combining technical indicators with news sentiment improves short-term trend prediction and leads to better risk-adjusted returns than a purely price-based baseline.
+
+---
+
+## Data Acquisition
+Retrieves raw market data for Nasdaq-100 symbols 
+
+**Script**
+
+[scripts/01data_acquisition.py](scripts/01data_acquisition.py)
+
+Pulls **1‑minute** bars  from **2020‑01‑01 → 2025‑11‑21** and writes `symbol.parquet` files to  
+`data/raw/Prices_1m_adj`.
+
+Bar data AAPL example:
+
+<<img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />
+>
