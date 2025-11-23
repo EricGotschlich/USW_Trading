@@ -21,7 +21,7 @@ Prediction of 60 minute trend direction for NASDAQ-100 stocks during regular US 
 
 Procedure Overview:
 
--Collects for all NASDAQ-100 tickers 1-minute bars from 2020-01-01 to 2025-01-01 via Alpaca and yfinance and retrieves recent news per ticker to compute sentiment scores.  
+-Collects for all NASDAQ-100 tickers 1-minute bars from 2020-01-01 to 2025-11-21 via Alpaca and yfinance and retrieves recent news per ticker to compute sentiment scores.  
 -Engineers above features for each symbol for each minute.
 -Predicts direction of trend over next 60 minutes (entry-network) using feed-forward neural network ([128, 64] hidden layers, dropout 0.1, ReLU activation).
 -Use decision tree (depth=10) with embeddings (hidden layer with 64 neurons) to predict entry points with positive trend direction.
