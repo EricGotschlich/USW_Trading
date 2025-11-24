@@ -94,7 +94,6 @@ def get_sentiment(text, tokenizer, model, device) -> float:
         return_tensors="pt",
         truncation=True,
         max_length=512,
-        padding=True,
     )
     inputs = {k: v.to(device) for k, v in inputs.items()}
 
