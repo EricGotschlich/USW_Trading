@@ -72,8 +72,8 @@ Filtern nach den Minuten, die innerhalb der regulären Handelszeiten des offizie
 
 
 #### Parameter
--**start**: Start-Datum 
--**end**: End-Datum
+- `start`: Start-Datum 
+- `end`: End-Datum
 
 
 #### Yahoo Finance API
@@ -81,8 +81,8 @@ Ruft die letzten 10 Nachrichtenartikel für NASDAQ-bezogene Symbole über die Ya
 
 
 #### Parameter 
-- **ticker**: erstellt ein Ticker-Objekt
-- **news_items**: gibt eine Liste von News-Einträgen
+- `ticker`: erstellt ein Ticker-Objekt
+- `news_items`: gibt eine Liste von News-Einträgen
 
 
 #### FinBERT API
@@ -90,8 +90,8 @@ Berechnet den sentiment score der letzten 10 Nachrichtenartikel. Die Daten werde
 
 
 #### Parameter
-- **text**: (Headline + Summary)
-- **return_tensors**: pt (Ausgabe als PyTorch-Tensors)
-- **truncation**: True (Text wird auf max_length abgeschnitten)
-- **max_length**: 512 (maximale Tokenlänge)
+- `text`: (Headline + Summary)
+- `return_tensors`: pt (Ausgabe als PyTorch-Tensors)
+- `truncation`: True (Text wird auf max_length abgeschnitten)
+- `max_length`: 512 (maximale Tokenlänge)
 
