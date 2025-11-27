@@ -77,8 +77,8 @@ Filtern nach den Minuten, die innerhalb der regulären Handelszeiten des offizie
 
 
 #### Parameter
-- `start`: Start-Datum 
-- `end`: End-Datum
+- `start`: Start-Datum (01.01.2020)
+- `end`: End-Datum 
 
 
 #### Alpaca News API
@@ -86,8 +86,12 @@ Ruft Nachrichtenartikel seit 1.1.2020 für NASDAQ-bezogene Symbole über die Alp
 
 
 #### Parameter 
-- `ticker`: erstellt ein Ticker-Objekt
-- `news_items`: gibt eine Liste von News-Einträgen
+- `symbols`: Symbole, die geladen werden müssen
+- `start`: Start-Datum (01.01.2020)
+- `end`: End-Datum (21.11.2025)
+- `limit`: 50 (Anzahl Artikel pro Anfrage)
+- `sort`: desc
+- `include_content`: false (HTML-Content nicht nötig)
 
 
 #### FinBERT API
