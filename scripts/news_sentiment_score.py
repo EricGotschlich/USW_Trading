@@ -111,7 +111,7 @@ def get_sentiment(text, tokenizer, model, device) -> float:
 
 def main():
     project_root = Path(__file__).resolve().parents[1]
-    news_dir = project_root / "data" / "raw" / "News_raw"
+    news_dir = project_root / "data" / "raw" / "News_alpaca"
     out_dir = project_root / "data" / "processed"
     out_dir.mkdir(parents=True, exist_ok=True)
 

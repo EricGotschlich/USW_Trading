@@ -8,13 +8,12 @@ Outputs:
 - One Parquet per symbol with raw news data under <DATA_PATH>/News_raw/
 
 Requirements:
-- Packages: alpaca-py, yfinance, pandas, pyarrow, pytz
+- Packages: alpaca-py, pandas, pyarrow, pytz
 """
 
 import os
 from datetime import datetime
 import pandas as pd
-import yfinance as yf
 import pytz
 import yaml
 
@@ -186,42 +185,6 @@ def download_1m_prices(symbol: str) -> pd.DataFrame:
 
 
 # ----------------------------------------------------------------------
-# Helper: download news for one symbol via yfinance
-# ----------------------------------------------------------------------
-def download_news(symbol: str) -> pd.DataFrame:
-    """
-    Download raw news items for a single symbol using yfinance's Ticker.news.
-    Returns a DataFrame with:
-    all original columns from yfinance + 'symbol'.
-    """
-    print(f"Fetching news for {symbol}")
-    ticker = yf.Ticker(symbol)
-
-    try:
-        news_items = ticker.news
-    except Exception as e:
-        print(f"Warning: error while fetching news for {symbol}: {e}")
-        return pd.DataFrame()
-
-    if not news_items:
-        print(f"No news items for {symbol}")
-        return pd.DataFrame()
-
-    # 1) ALLE Spalten behalten
-    news_df = pd.DataFrame(news_items)
-
-    # 2) Falls es providerPublishTime gibt → in Datum/Zeit umwandeln
-    if "providerPublishTime" in news_df.columns:
-        news_df["providerPublishTime"] = pd.to_datetime(
-            news_df["providerPublishTime"], unit="s", utc=True
-        )
-
-    # 3) Symbol-Spalte hinzufügen
-    news_df["symbol"] = symbol
-
-    return news_df
-
-# ----------------------------------------------------------------------
 # Main loop: iterate over all NASDAQ-100 symbols
 # ----------------------------------------------------------------------
 
@@ -241,12 +204,4 @@ for symbol in tickers:
     else:
         print(f"Skipped saving prices for {symbol} (empty DataFrame)")
 
-    # ------------------- News (Yahoo Finance) -------------------
-    news_df = download_news(symbol)
-    if not news_df.empty:
-        out_news = os.path.join(NEWS_DIR, f"{symbol}_news.parquet")
-        news_df.to_parquet(out_news, index=False)
-        print(f"Saved news data to {out_news}")
-    else:
-        print(f"Skipped saving news for {symbol} (no news).")
 print("\nData acquisition finished for all NASDAQ-100 symbols.")
