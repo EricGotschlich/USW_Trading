@@ -12,12 +12,12 @@ Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für NASDAQ-1
 - Normalisierte exponentielle gleitende Durchschnitte (EMA) von Preis und Volumen über t = [5, 15, 30, 60, 120] Minuten
 - Aktien­spezifische Volatilitätsmerkmale
 - Normalisierte Indexmerkmale wie NASDAQ-100-Indexrendite und Intraday-Volatilität
-- Sentiment-Scores aus aktuellen Überschriften und Zusammenfassungen pro Aktie
+- Sentiment-Scores aus Überschriften und Zusammenfassungen pro Aktie
 
 
 ### Verfahrensübersicht:
 
-- Sammelt für alle NASDAQ-100-Ticker 1-Minuten-Kursdaten für den Zeitraum vom 01.01.2020 bis 21.11.2025  und ruft aktuelle Nachrichten pro Ticker ab, um Sentiment-Scores zu berechnen.
+- Sammelt für alle NASDAQ-100-Ticker 1-Minuten-Kursdaten für den Zeitraum vom 01.01.2020 bis 21.11.2025 und ruft Nachrichten pro Ticker ab, um Sentiment-Scores zu berechnen.
 - Sagt die Richtung des Trends über nächste t Minuten vorraus mit einem Neural Network
 - Verwendet einen Entscheidungsbaum, um Einstiege mit positiver Trendrichtung zu prognostizieren
 - Implementiert eine Trading Strategie in Alpaca
@@ -28,14 +28,13 @@ Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für NASDAQ-1
 ---
 
 ## Data Acquisition
-Ruft rohe Marktdaten und die 10 aktuellsten Nachrichtenartikel für Nasdaq-100-Symbole ab und berechnet den Sentiment-Score.
+Ruft rohe Marktdaten und Nachrichtenartikel für Nasdaq-100-Symbole ab und berechnet den Sentiment-Score.
 
 **Script**
 
 [scripts/01data_acquisition.py](scripts/01data_acquisition.py)
 
-Holt **1‑minuten** Kerzen von **2020‑01‑01 bis 2025‑11‑21** und schreibt `symbol.parquet` Dateien zu  
-`data/raw/Prices_1m_adj`.
+Holt **1‑minuten** Kerzen von **2020‑01‑01 bis 2025‑11‑21** und schreibt `symbol.parquet` Dateien zu `data/raw/Prices_1m_adj`.
 
 - `columns`: `timestamp`, `open`, `high`, `low`, `close`, `volume`, `trade_count`,`vwap`, `symbol`   
 
@@ -43,9 +42,15 @@ Bar data AAPL Beispiel:
 
 <img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />
 
-[scripts/news_sentiment_score.py](scripts/news_sentiment_score.py)
+[scripts/fetch_nasdaq100_news_alpaca.py](scripts/fetch_nasdaq100_news_alpaca.py) 
 
-Berechnet den Sentiment Score für jedes Symbol basierend auf den letzten Nachrichtenartikeln und erstellt`data/processed/nasdaq_news_with_sentiment.parquet` file.
+Holt historische Nachrichtenartikel von **2020‑01‑01 bis 2025‑11‑21** und erstellt `symbol.parquet` Dateien zu `data/raw/News_alpaca`
+
+- `colums`: `author`, `content`, `created_at`, `headline`, `id`, `images`, `source`, `summary`, `symbols`, `updated_at`, `url`,`symbol`
+
+[scripts/news_sentiment_score.py](scripts/news_sentiment_score.py)  
+
+Berechnet den Sentiment Score für jeden Nachrichtenartikel und erstellt`data/processed/nasdaq_news_with_sentiment.parquet` file.
 
 - `columns`: `id`, `content`, `symbol`, `sentiment_score`,
 
@@ -76,8 +81,8 @@ Filtern nach den Minuten, die innerhalb der regulären Handelszeiten des offizie
 - `end`: End-Datum
 
 
-#### Yahoo Finance API
-Ruft die letzten 10 Nachrichtenartikel für NASDAQ-bezogene Symbole über die Yahoo Finance API ab. Die Daten werden in `data/raw/News_raw` gespeichert.
+#### Alpaca News API
+Ruft Nachrichtenartikel seit 1.1.2020 für NASDAQ-bezogene Symbole über die Alpaca News API ab. Die Daten werden in `data/raw/News_alpaca` gespeichert.
 
 
 #### Parameter 
@@ -86,7 +91,7 @@ Ruft die letzten 10 Nachrichtenartikel für NASDAQ-bezogene Symbole über die Ya
 
 
 #### FinBERT API
-Berechnet den sentiment score der letzten 10 Nachrichtenartikel. Die Daten werden in `data/processed/nasdaq_news_with_sentiment.parquet` gespeichert.
+Berechnet den sentiment score jedes Nachrichtenartikel. Die Daten werden in `data/processed/nasdaq_news_with_sentiment.parquet` gespeichert.
 
 
 #### Parameter
