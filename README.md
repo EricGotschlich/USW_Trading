@@ -3,7 +3,7 @@
 ### Problem Definition:
 **Ziel**
 
-Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für NASDAQ-100-Aktien während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
+Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für ausgewählte NASDAQ-100-Aktien (META, TSLA, AMZN, AAPL, NVDA) während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
 
 
 **Input Features**
@@ -17,7 +17,7 @@ Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für NASDAQ-1
 
 ### Verfahrensübersicht:
 
-- Sammelt für alle NASDAQ-100-Ticker 1-Minuten-Kursdaten für den Zeitraum vom 01.01.2020 bis 21.11.2025 und ruft Nachrichten pro Ticker ab, um Sentiment-Scores zu berechnen.
+- Sammelt für die fünf NASDAQ-100-Ticker META, TSLA, AMZN, AAPL und NVDA 1-Minuten-Kursdaten für den Zeitraum vom 01.01.2020 bis 21.11.2025 und ruft Nachrichten pro Ticker ab, um Sentiment-Scores zu berechnen.
 - Sagt die Richtung des Trends über nächste t Minuten vorraus mit einem Neural Network
 - Verwendet einen Entscheidungsbaum, um Einstiege mit positiver Trendrichtung zu prognostizieren
 - Implementiert eine Trading Strategie in Alpaca
@@ -28,7 +28,7 @@ Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für NASDAQ-1
 ---
 
 ## Data Acquisition
-Ruft rohe Marktdaten und Nachrichtenartikel für Nasdaq-100-Symbole ab und berechnet den Sentiment-Score.
+Ruft rohe Marktdaten und Nachrichtenartikel für die ausgewählten Nasdaq-100-Symbole ab und berechnet den Sentiment-Score.
 
 **Script**
 
@@ -61,7 +61,7 @@ Sentiment score AAPL Beispiel:
 **API**
 
 #### Alpaca Market Data API
-Ruft historische 1-Minuten-Kerzendaten für NASDAQ-100 Symbole und QQQ über die Alpaca Data API ab. Die Daten werden im Parquet-Format unter `data/raw/Prices_1m_adj` gespeichert.
+Ruft historische 1-Minuten-Kerzendaten für die ausgewählten NASDAQ-100 Symbole und QQQ über die Alpaca Data API ab. Die Daten werden im Parquet-Format unter `data/raw/Prices_1m_adj` gespeichert.
 
 
 #### Parameter
@@ -82,7 +82,7 @@ Filtern nach den Minuten, die innerhalb der regulären Handelszeiten des offizie
 
 
 #### Alpaca News API
-Ruft Nachrichtenartikel seit 1.1.2020 für NASDAQ-bezogene Symbole über die Alpaca News API ab. Die Daten werden in `data/raw/News_alpaca` gespeichert.
+Ruft Nachrichtenartikel seit 1.1.2020 für die ausgewählten NASDAQ-bezogene Symbole über die Alpaca News API ab. Die Daten werden in `data/raw/News_alpaca` gespeichert.
 
 
 #### Parameter 
