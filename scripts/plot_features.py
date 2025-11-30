@@ -144,7 +144,7 @@ def main():
     # Redundanz-Check: Feature-Paare mit |corr| > 0.90
     # ------------------------------------------------------------------
     print("\n--- REDUNDANCY CHECK (|corr| > 0.90) ---")
-    threshold = 0.70
+    threshold = 0.90
     redundant_pairs = []
 
     cols = corr_df.columns
