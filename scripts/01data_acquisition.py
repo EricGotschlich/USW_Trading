@@ -1,6 +1,6 @@
 """
 This script downloads historical 1-minute adjusted OHLCV data for NASDAQ-100 symbols
-using the Alpaca Market Data API and collects recent news for each symbol via Yahoo Finance (yfinance).
+using the Alpaca Market Data API
 
 
 Outputs:
