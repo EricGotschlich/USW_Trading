@@ -3,13 +3,13 @@
 ### Problem Definition:
 **Ziel**
 
-Vorhersage der nächsten t=[15, 30, 60, 120] Minuten Trendrichtung für ausgewählte NASDAQ-100-Aktien (META, TSLA, AMZN, AAPL, NVDA) während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
+Vorhersage der nächsten t=[15, 30, 60,] Minuten Trendrichtung für ausgewählte NASDAQ-100-Aktien (META, TSLA, AMZN, AAPL, NVDA) während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
 
 
 **Input Features**
 
 - Normalisierte Intraday-OHLCV-Daten (Open, High, Low, Close, Volume) mit 1-Minuten-Frequenz und den zugehörigen Log-Returns
-- Normalisierte exponentielle gleitende Durchschnitte (EMA) von Preis und Volumen über t = [5, 15, 30, 60, 120] Minuten
+- Normalisierte exponentielle gleitende Durchschnitte (EMA) von Preis und Volumen über t = [5, 15, 30, 60,] Minuten
 - Aktienspezifische Volatilitätsmerkmale
 - Normalisierte Indexmerkmale wie NASDAQ-100-Indexrendite und Intraday-Volatilität
 - Sentiment-Scores aus Überschriften und Zusammenfassungen pro Aktie
@@ -185,7 +185,6 @@ Die Grafik zeigt, wie stark die Anzahl der Trades im Zeitfenster von −30 bis +
 | log_ret_15m           | 2 877 658.00 |   0.00005 |   0.00575 |  -0.30384 | -0.00185 |   0.00003 |   0.00193 |       0.22827 |
 | log_ret_60m           | 2 877 433.00 |   0.00019 |   0.01137 |  -0.30633 | -0.00378 |   0.00019 |   0.00413 |       0.24219 |
 | ema_diff_15_60        | 2 877 733.00 |   0.00976 |   0.82766 | -41.19347 | -0.17406 |   0.00751 |   0.19658 |      40.25263 |
-| ema_diff_30_120       | 2 877 733.00 |   0.01958 |   1.16660 | -38.39148 | -0.26128 |   0.01462 |   0.30651 |      39.21163 |
 | rv_15m                | 2 877 658.00 |   0.00391 |   0.00445 |   0.00000 |  0.00192 |   0.00289 |   0.00449 |       0.28734 |
 | rv_60m                | 2 877 433.00 |   0.00845 |   0.00830 |   0.00090 |  0.00423 |   0.00631 |   0.00979 |       0.28820 |
 | hl_span               | 2 877 733.00 |   0.26026 |   0.31538 |   0.00000 |  0.08000 |   0.16010 |   0.32000 |      18.21000 |
@@ -204,6 +203,5 @@ Die Grafik zeigt, wie stark die Anzahl der Trades im Zeitfenster von −30 bis +
 | target_return_15m  | 2877658.00 | 0.00479 | 0.39869 | -25.21680 | -0.11837 | 0.00396 | 0.12510 | 23.75567 |
 | target_return_30m  | 2877583.00 | 0.00875 | 0.54972 | -25.21831 | -0.16640 | 0.00718 | 0.17893 | 23.76203 |
 | target_return_60m  | 2877433.00 | 0.01633 | 0.76553 | -24.86983 | -0.23849 | 0.01303 | 0.26144 | 24.19581 |
-| target_return_120m | 2877133.00 | 0.03147 | 1.06932 | -24.66198 | -0.35568 | 0.02442 | 0.40028 | 24.93725 |
 
 
