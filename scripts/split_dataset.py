@@ -1,7 +1,7 @@
 # scripts/split_dataset.py
 
 from pathlib import Path
-from typing import List
+from typing import List, Dict, Tuple
 
 import pandas as pd
 import yaml
@@ -18,7 +18,6 @@ FEATURE_COLS: List[str] = [
 
     # EMA-basierte Trend-Signale
     "ema_diff_15_60",
-    "ema_diff_30_120",
 
     # Volatilität (Aktie)
     "rv_15m",
@@ -35,8 +34,6 @@ FEATURE_COLS: List[str] = [
     "rel_log_ret_60m",
 
     # News-Sentiment
-    "last_news_sentiment",
-    "news_age_minutes",
     "effective_sentiment_t",
 ]
 
@@ -44,7 +41,6 @@ TARGET_COLS: List[str] = [
     "target_return_15m",
     "target_return_30m",
     "target_return_60m",
-    "target_return_120m",
 ]
 
 # Nur diese Symbole sollen berücksichtigt werden
@@ -72,6 +68,47 @@ def load_data_prep_dates(project_root: Path):
 
 
 # ------------------------------------------------------------
+# 2.5) Winsorizing / Outlier-Clipping
+# ------------------------------------------------------------
+
+def compute_feature_quantiles(
+    df_train: pd.DataFrame,
+    feature_cols: List[str],
+    lower_q: float = 0.005,
+    upper_q: float = 0.995,
+) -> Dict[str, Tuple[float, float]]:
+    """
+    Berechnet pro Feature-Spalte (nur im TRAIN-Set) die unteren/oberen Quantile.
+    Diese Grenzen verwenden wir später zum Clipping in Train/Val/Test.
+    """
+    quantiles: Dict[str, Tuple[float, float]] = {}
+
+    for col in feature_cols:
+        if col not in df_train.columns:
+            continue
+        lo = df_train[col].quantile(lower_q)
+        hi = df_train[col].quantile(upper_q)
+        quantiles[col] = (lo, hi)
+
+    return quantiles
+
+
+def apply_clipping(
+    df: pd.DataFrame,
+    quantiles: Dict[str, Tuple[float, float]],
+) -> pd.DataFrame:
+    """
+    Wendet die vorher berechneten Quantile auf ein beliebiges Split-DataFrame an.
+    Alle Spalten, die in 'quantiles' vorhanden sind, werden per .clip() beschnitten.
+    """
+    df = df.copy()
+    for col, (lo, hi) in quantiles.items():
+        if col in df.columns:
+            df[col] = df[col].clip(lower=lo, upper=hi)
+    return df
+
+
+# ------------------------------------------------------------
 # 3) Hauptfunktion
 # ------------------------------------------------------------
 
@@ -95,7 +132,7 @@ def main():
         print(f"[WARN] Keine *_features_with_targets.parquet in {processed_dir} gefunden.")
         return
 
-    # *** HIER: explizit auf deine 5 Symbole filtern ***
+    # Nur deine 5 Symbole
     feature_target_files = []
     for p in all_files:
         symbol = p.stem.replace("_features_with_targets", "").upper()
@@ -130,7 +167,7 @@ def main():
         df = df.sort_index()
         df["symbol"] = symbol  # Symbol als Feature/Info behalten
 
-        # Nur Spalten behalten, die wir wirklich fürs Modell wollen
+        # Nur Spalten behalten, die wir fürs Modell wollen
         wanted_cols = ["symbol"]
         for c in FEATURE_COLS + TARGET_COLS:
             if c in df.columns:
@@ -170,13 +207,41 @@ def main():
         (full_df.index > val_date) & (full_df.index <= test_date)
     ]
 
-    # 3.7 Splits speichern
+    print("\n[INFO] Split-Größen (vor Outlier-Clipping):")
+    print(f"  Train:      {len(train):,}")
+    print(f"  Validation: {len(validation):,}")
+    print(f"  Test:       {len(test):,}")
+
+    # 3.7 Quantile nur auf TRAIN berechnen
+    feature_cols_present = [c for c in FEATURE_COLS if c in train.columns]
+    print(f"\n[INFO] Berechne Quantile für Outlier-Clipping (Features):")
+    print(f"  {feature_cols_present}")
+
+    quantiles = compute_feature_quantiles(
+        df_train=train,
+        feature_cols=feature_cols_present,
+        lower_q=0.005,   # untere 0.5 %
+        upper_q=0.995,   # obere 0.5 %
+    )
+
+    # 3.8 Clipping auf alle Splits anwenden
+    train_clean = apply_clipping(train, quantiles)
+    validation_clean = apply_clipping(validation, quantiles)
+    test_clean = apply_clipping(test, quantiles)
+
+    # 3.9 Splits speichern
     splits_dir = processed_dir / "splits"
     splits_dir.mkdir(parents=True, exist_ok=True)
 
+    # Roh-Splits (optional, aber oft nützlich)
     train.to_parquet(splits_dir / "usw_train.parquet", index=True)
     validation.to_parquet(splits_dir / "usw_validation.parquet", index=True)
     test.to_parquet(splits_dir / "usw_test.parquet", index=True)
+
+    # Gecleante Splits (fürs Modell-Training)
+    train_clean.to_parquet(splits_dir / "usw_train_clean.parquet", index=True)
+    validation_clean.to_parquet(splits_dir / "usw_validation_clean.parquet", index=True)
+    test_clean.to_parquet(splits_dir / "usw_test_clean.parquet", index=True)
 
     print("\n" + "=" * 70)
     print("Train/Validation/Test-Splits erstellt (nur AMZN, AAPL, META, NVDA, TSLA).")
@@ -184,7 +249,9 @@ def main():
     print(f"Validation-Split: {len(validation):,} Zeilen")
     print(f"Test-Split:       {len(test):,} Zeilen")
     print(f"Gespeichert unter: {splits_dir}")
+    print("Zusätzlich: *_clean.parquet mit Outlier-Clipping (0.5% / 99.5%) erstellt.")
     print("=" * 70 + "\n")
+
 
 
 if __name__ == "__main__":

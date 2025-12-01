@@ -95,7 +95,7 @@ def main():
         print(f"[WARN] Keine Feature-Dateien in {processed_dir} gefunden.")
         return
 
-    windows = [15, 30, 60, 120]
+    windows = [15, 30, 60,]
 
     print(f"[INFO] Found {len(feature_files)} Feature-Dateien.")
     for path in feature_files:

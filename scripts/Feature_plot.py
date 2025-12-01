@@ -117,10 +117,6 @@ def plot_scatter_stock_vs_index(
         limit = 0.03
         axis = 0.035
         tick_step = 0.005
-    elif window == 120:
-        limit = 0.07
-        axis = 0.08
-        tick_step = 0.01
     else:
         # Fallback
         limit = 0.04

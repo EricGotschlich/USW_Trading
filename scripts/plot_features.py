@@ -60,14 +60,11 @@ def main():
     df = pd.concat(dfs, axis=0).sort_index()
     print(f"[INFO] Gesamt-Daten: {df.shape[0]:,} Zeilen, {df.shape[1]} Spalten")
 
-    # ------------------------------------------------------------------
-    # Features und Targets definieren
-    # ------------------------------------------------------------------
     target_cols = [
         "target_return_15m",
         "target_return_30m",
         "target_return_60m",
-        "target_return_120m",
+
     ]
 
     feature_cols = [
@@ -78,7 +75,6 @@ def main():
 
         # EMA-basierte Trend-Signale
         "ema_diff_15_60",
-        "ema_diff_30_120",
 
         # Volatilität (Aktie)
         "rv_15m",
@@ -103,9 +99,6 @@ def main():
     feature_cols = [c for c in feature_cols if c in df.columns]
     target_cols = [c for c in target_cols if c in df.columns]
 
-    # ------------------------------------------------------------------
-    # Descriptive Statistics
-    # ------------------------------------------------------------------
     feature_stats = df[feature_cols].describe().transpose()
     target_stats = df[target_cols].describe().transpose()
 
@@ -116,9 +109,6 @@ def main():
     print(f"  - {data_dir / 'feature_descriptive_statistics.csv'}")
     print(f"  - {data_dir / 'target_descriptive_statistics.csv'}")
 
-    # ------------------------------------------------------------------
-    # Feature-Korrelationsmatrix
-    # ------------------------------------------------------------------
     clean_df = df[feature_cols].dropna()
     corr_df = clean_df.corr()
 
