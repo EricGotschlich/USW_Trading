@@ -21,6 +21,25 @@ def load_price_parquet(prices_dir: Path, symbol: str) -> pd.DataFrame:
     return df
 
 
+def load_data_prep_dates(project_root: Path):
+    """
+    Liest TRAIN_DATE, VALIDATION_DATE, TEST_DATE aus conf/params.yaml (Block DATA_PREP).
+    """
+    conf_path = project_root / "conf" / "params.yaml"
+    if not conf_path.exists():
+        raise FileNotFoundError(f"Config-Datei nicht gefunden: {conf_path}")
+
+    with conf_path.open("r", encoding="utf-8") as f:
+        params = yaml.safe_load(f)
+
+    data_prep_cfg = params["DATA_PREP"]
+    train_date = pd.to_datetime(data_prep_cfg["TRAIN_DATE"], utc=True)
+    val_date = pd.to_datetime(data_prep_cfg["VALIDATION_DATE"], utc=True)
+    test_date = pd.to_datetime(data_prep_cfg["TEST_DATE"], utc=True)
+
+    return train_date, val_date, test_date
+
+
 def main():
     # ------------------------------------------------------------------
     # Pfade
@@ -115,6 +134,44 @@ def main():
     print(f"Ausgabepfade: {processed_dir} (pro Symbol *_features.parquet/.csv)")
     print("=" * 70 + "\n")
 
+# ------------------------------------------------------------------
+    # 3) Train / Validation / Test nach Datum splitten
+    # ------------------------------------------------------------------
+    train_date, val_date, test_date = load_data_prep_dates(project_root)
+    print(
+        f"[INFO] Data-Prep-Grenzen:\n"
+        f"  TRAIN_DATE      = {train_date}\n"
+        f"  VALIDATION_DATE = {val_date}\n"
+        f"  TEST_DATE       = {test_date}"
+    )
+
+    # Indizes als DatetimeIndex sicherstellen
+    if not isinstance(features_df.index, pd.DatetimeIndex):
+        features_df.index = pd.to_datetime(features_df.index, utc=True)
+
+    train = features_df[features_df.index <= train_date]
+    validation = features_df[
+        (features_df.index > train_date) & (features_df.index <= val_date)
+    ]
+    test = features_df[
+        (features_df.index > val_date) & (features_df.index <= test_date)
+    ]
+
+    # Speicherort für Splits (z.B. data/processed/splits)
+    splits_dir = processed_dir / "splits"
+    splits_dir.mkdir(parents=True, exist_ok=True)
+
+    train.to_parquet(splits_dir / "usw_train.parquet", index=True)
+    validation.to_parquet(splits_dir / "usw_validation.parquet", index=True)
+    test.to_parquet(splits_dir / "usw_test.parquet", index=True)
+
+    print("\n" + "=" * 70)
+    print("Train/Validation/Test-Splits erstellt.")
+    print(f"Train-Split:      {len(train):,} Zeilen")
+    print(f"Validation-Split: {len(validation):,} Zeilen")
+    print(f"Test-Split:       {len(test):,} Zeilen")
+    print(f"Gespeichert unter: {splits_dir}")
+    print("=" * 70 + "\n")
 
 if __name__ == "__main__":
     main()

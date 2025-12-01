@@ -1,0 +1,10 @@
+# conf/params.yaml
+DATA_ACQUISITION:
+  DATA_PATH: "C:/Users/ericg/PycharmProjects/USW_Trading/data/raw"
+  SYMBOLS_CSV: "C:/Users/ericg/PycharmProjects/USW_Trading/data/nasdaq_100.csv"
+  START_DATE: "2020-01-01"
+  END_DATE: "2025-11-21"
+DATA_PREP:
+  TRAIN_DATE: "2023-12-31 23:59:00+00:00"
+  VALIDATION_DATE: "2024-12-31 23:59:00+00:00"
+  TEST_DATE: "2025-11-21 23:59:00+00:00"
