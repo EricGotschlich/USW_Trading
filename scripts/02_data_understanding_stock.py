@@ -173,7 +173,7 @@ def main():
         # Plot 4: Histogramme der t-Minuten-Log-Returns in EINER PNG
         #        für t = [15, 30, 60, 120]
         # -----------------------------------------------------
-        horizons = [15, 30, 60, 120]
+        horizons = [15, 30, 60]
 
         # t-Minuten-Returns vorbereiten
         for t in horizons:

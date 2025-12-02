@@ -50,7 +50,7 @@ def load_symbol_df(symbol: str) -> pd.DataFrame:
 
 
 # -------------------------------------------------------------------
-# 1) EMA(15) vs EMA(60) und EMA-Differenz
+# 1) EMA(15) vs EMA(60)
 # -------------------------------------------------------------------
 def plot_ema_and_diff(df: pd.DataFrame, symbol: str, n_points: int = 300) -> None:
     """
@@ -172,28 +172,31 @@ def plot_scatter_stock_vs_index(
 
 
 # -------------------------------------------------------------------
-# 3) Intraday-Returns (ähnlich wie bei der anderen Gruppe)
+# 3) Intraday-Returns
 # -------------------------------------------------------------------
-def plot_intraday_log_returns(
+def plot_intraday_targets(
     df: pd.DataFrame,
     symbol: str,
     day: str = "2025-11-20",
 ) -> None:
     """
-    Intraday-Plot der stündlichen Mittelwerte von
-    log_ret_1m, log_ret_15m, log_ret_60m für einen Tag.
+    Intraday-Plot der stündlichen Mittelwerte der Target-Returns
+    (target_return_15m/30m/60m/120m) für einen Tag.
 
-    Struktur ist absichtlich sehr ähnlich zum Beispiel mit
-    simple_return_1m/5m/15m – nur eben mit deinen Log-Return-Features.
+    Struktur analog zum Beispiel mit simple_return_*,
+    nur auf Basis der bereits berechneten Targets (in %).
     """
     symbol = symbol.upper()
 
-    # Wir arbeiten mit den Log-Return-Spalten aus deinen Features
-    cols = ["log_ret_1m", "log_ret_15m", "log_ret_60m"]
+    cols = [
+        "target_return_15m",
+        "target_return_30m",
+        "target_return_60m",
+    ]
     cols = [c for c in cols if c in df.columns]
 
     if not cols:
-        print("[WARN] Keine passenden log_ret_* Spalten gefunden – Intraday-Plot wird übersprungen.")
+        print("[WARN] Keine target_return_* Spalten gefunden – Intraday-Plot wird übersprungen.")
         return
 
     # Tag auswählen
@@ -218,7 +221,7 @@ def plot_intraday_log_returns(
         print(f"[WARN] Nach Zeitfilter (06–22 Uhr) keine Daten mehr für {day_dt}.")
         return
 
-    # Stündlich aggregieren (Mittelwerte der Log-Returns)
+    # Stündlich aggregieren (Mittelwerte der Targets in %)
     df_hourly = df_day[cols].resample("1H").mean()
 
     # Plot
@@ -226,19 +229,19 @@ def plot_intraday_log_returns(
     for c in cols:
         plt.plot(df_hourly.index, df_hourly[c], label=c)
 
-    plt.title(f"{symbol}: Stündliche Log-Returns für {day} (06:00–22:00)")
+    plt.title(f"{symbol}: Stündliche Target-Returns für {day} (Mittelwert, in %)")
     plt.xlabel("Uhrzeit")
-    plt.ylabel("Log-Returns (Mittelwert pro Stunde)")
+    plt.ylabel("Target-Return (Mittelwert pro Stunde, in %)")
     plt.grid(True)
     plt.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
 
-    out_path = IMG_DIR / f"{symbol}_intraday_log_returns_{day}.png"
+    out_path = IMG_DIR / f"{symbol}_intraday_target_returns_{day}.png"
     plt.savefig(out_path, dpi=300)
     plt.close()
 
-    print(f"[OK] Intraday-Returns-Plot gespeichert unter: {out_path}")
+    print(f"[OK] Intraday-Target-Returns-Plot gespeichert unter: {out_path}")
 
 
 # -------------------------------------------------------------------
@@ -262,7 +265,7 @@ def main():
 
     print("[INFO] Erzeuge Intraday-Returns-Plot (Log-Returns) ...")
     # Datum kannst du frei wählen, nimm einen Tag wo du sicher Daten hast
-    plot_intraday_log_returns(
+    plot_intraday_targets(
         df,
         SYMBOL,
         day="2025-11-20",

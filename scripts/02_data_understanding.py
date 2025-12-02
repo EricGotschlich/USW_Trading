@@ -616,7 +616,6 @@ def plot_price_for_symbol(
     path_vp = compute_price_path(vp, price_df)
 
     plt.figure(figsize=(12, 6))
-    # andere Styles als im Beispielprojekt
     plt.plot(minutes, path_vp, marker="o", markevery=12, linewidth=2.2, label="Very positive (≥ 0.75)")
     plt.plot(minutes, path_pos, linestyle="-.", linewidth=1.8, label="Positive (0.25–0.75)")
     plt.plot(minutes, path_neu, linestyle=":", linewidth=1.8, label="Neutral (−0.25–0.25)")
