@@ -3,16 +3,18 @@
 ### Problem Definition:
 **Ziel**
 
-Vorhersage der nächsten t=[15, 30, 60,] Minuten Trendrichtung für ausgewählte NASDAQ-100-Aktien (META, TSLA, AMZN, AAPL, NVDA) während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
+Vorhersage der nächsten t=[1, 5, 10, 15,] Minuten Trendrichtung für ausgewählte NASDAQ-100-Aktien (META, TSLA, AMZN, AAPL, NVDA) während der regulären US-Handelszeiten. Für jede NASDAQ-100-Aktie und jede 1-Minuten-Kerze im Zeitraum vom 01.01.2020 bis 21.11.2025 berechnen wir die die erwartete Preisveränderung über die zukünftigen t Minuten der Aktie. Dabei werden Minuten-Daten und News genutzt, damit wiederkehrende Strukturen wie Volatilität oder newsgetriebene Bewegungen identifiziert werden.
+
 
 
 **Input Features**
 
 - Normalisierte Intraday-OHLCV-Daten (Open, High, Low, Close, Volume) mit 1-Minuten-Frequenz und den zugehörigen Log-Returns
-- Normalisierte exponentielle gleitende Durchschnitte (EMA) von Preis und Volumen über t = [5, 15, 30, 60,] Minuten
+- Normalisierte exponentielle gleitende Durchschnitte (EMA) von Preis und Volumen 
 - Aktienspezifische Volatilitätsmerkmale
 - Normalisierte Indexmerkmale wie NASDAQ-100-Indexrendite und Intraday-Volatilität
 - Sentiment-Scores aus Überschriften und Zusammenfassungen pro Aktie
+
 
 
 ### Verfahrensübersicht:
@@ -227,3 +229,23 @@ Die Grafik zeigt, wie stark die Anzahl der Trades im Zeitfenster von −30 bis +
 |15 | 0.004 | 0.011 | 0.018 | 1.942 | 0.015 | 0.017 | 1.513 | 63.368 | 3.340 | 0.000 | 0.008 | 0.008 | -0.305 | 0.945 | 1.098 | 0.861 |
 
 
+
+## 4 - Data-Split 
+Data Split Script
+
+[split_dataset.py](scripts/split_dataset.py)
+
+
+## 5 - Post-Split Preparation
+Post Split Script
+[post_split_scale.py](scripts/post_split_scale.py)
+
+### X-Unscaled
+<img width="1791" height="569" alt="image1" src="https://github.com/user-attachments/assets/0bde9304-a414-44a1-98de-65c81324373e" />
+### X-Scaled
+<img width="1801" height="565" alt="image2" src="https://github.com/user-attachments/assets/d6ff7bd5-2d86-423b-b12b-421ce268efe6" />
+
+### Y-Unscaled
+<img width="1199" height="571" alt="image3" src="https://github.com/user-attachments/assets/e74e29a4-6e17-4376-b85f-f5d5e702498d" />
+### Y-Scaled
+<img width="1207" height="566" alt="image4" src="https://github.com/user-attachments/assets/8fb9e570-2d44-4dc2-b0ef-32168bd75b20" />
