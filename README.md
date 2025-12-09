@@ -404,7 +404,7 @@ Im Loss-Plot ist zu sehen, dass das Training sehr schnell stoppt: Bereits nach w
 
 #### LSTM – Quantitative Ergebnisse
 
-Ein exemplarischer Run (gleiche Daten wie beim FFNN) zeigt:
+Ein exemplarischer Run zeigt:
 
 - **Baseline (Zero-Return)**  
   - MSE :  7.725123e-02
