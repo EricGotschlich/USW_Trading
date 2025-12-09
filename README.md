@@ -420,10 +420,10 @@ Ein exemplarischer Run zeigt:
 
 
 [METRICS] Pro Target:
-  Target Return 1m: MSE=1.559110e-02 | RMSE=1.248643e-01 | MAE=5.824056e-02 | R^2=0.1296
-  Target Return 5m: MSE=5.036982e-02 | RMSE=2.244322e-01 | MAE=1.168164e-01 | R^2=0.0439
-  Target Return 10m: MSE=9.349006e-02 | RMSE=3.057614e-01 | MAE=1.636007e-01 | R^2=0.0217
-  Target Return 15m: MSE=1.409328e-01 | RMSE=3.754102e-01 | MAE=2.017170e-01 | R^2=0.0133
+  - Target Return 1m: MSE=1.559110e-02 | RMSE=1.248643e-01 | MAE=5.824056e-02 | R^2=0.1296
+  - Target Return 5m: MSE=5.036982e-02 | RMSE=2.244322e-01 | MAE=1.168164e-01 | R^2=0.0439
+  - Target Return 10m: MSE=9.349006e-02 | RMSE=3.057614e-01 | MAE=1.636007e-01 | R^2=0.0217
+  - Target Return 15m: MSE=1.409328e-01 | RMSE=3.754102e-01 | MAE=2.017170e-01 | R^2=0.0133
 
 
 Momentan profitiert nur der sehr kurzfristige Horizont spürbar von der sequenziellen LSTM-Struktur; für längere Horizons überwiegt der Glättungseffekt und die Vorhersagen sind zu konservativ.
