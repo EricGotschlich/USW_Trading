@@ -358,6 +358,22 @@ In den Plots ist zu sehen, dass das BasicRNN die 1-Minuten-Returns etwas glätte
 
 Die Loss-Kurven zeigen einen kontinuierlichen Abfall des Trainings- und Validierungs-Losses. Gleichzeitig bleibt das absolute Fehlerniveau relativ hoch und nähert sich nur langsam einem Plateau an. Insgesamt liegt die Performance des RNNs in unseren Läufen sehr nahe an der Zero-Return-Baseline: Es gibt leichte Verbesserungen bei sehr kurzen Horizonten, aber keine klare, deutliche Überlegenheit gegenüber dem FFNN.
 
+#### RNN – Quantitative Ergebnisse
+
+(Zero-Baseline = immer Return 0 vorhersagen)
+
+- **Baseline (Zero-Return)**  
+  - MSE ≈ 7.725245e-02  
+  - RMSE ≈ 2.779432e-01
+  - MAE ≈ 0.1401  
+  - R² ≈ 1.400910e-01
+
+- **FFNN (Test-Set, echte Returns)**  
+  - MSE ≈ 7.479174e-02 
+  - RMSE ≈ 2.734808e-01 
+  - MAE ≈ 1.353122e-01  
+  - R² ≈ 0.0318
+
 Interpretation:
 
 - Das einfache RNN hat zwar Zugang zu Sequenzinformationen, ist mit nur einer Layer und 64 Hidden Units aber relativ schwach und tendiert zur **Unteranpassung (Underfitting)**.
