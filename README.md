@@ -252,7 +252,7 @@ Post Split Script
 
 ### Feature Target Korrelation Matrix
 <img width="3000" height="3150" alt="feature_target_correlation_matrix" src="https://github.com/user-attachments/assets/b4a7b00c-9e34-4b54-825c-3bb7e6436ae7" />
-Die Feature-Target-Korrelation zeigt, dass nur wenige Features überhaupt einen nennenswerten linearen Zusammenhang mit den zukünftigen Returns haben. Am stärksten ist log_ret_1m mit dem 1-Minuten-Target korreliert (ca. 0,37), gefolgt von index_log_ret_1m (ca. 0,26). Für längere Horizonte nimmt die Korrelation dieser beiden Features deutlich ab, z.B. auf nur noch etwa 0,13 beim 15-Minuten-Return. Alle anderen Features – weitere Log-Returns, EMA-Spread, Realized Volatility, Volumen-Maße, High-Low-Span und News-Sentiment – liegen im Bereich von 0,00 bis maximal ca. 0,1 und tragen damit nur sehr schwache lineare Signale bei. Insgesamt bestätigt die Matrix, dass kurzfristige Intraday-Returns stark vom Rauschen dominiert werden und sich selbst die „besten“ Features nur moderat zur Vorhersage eignen, insbesondere für längere Vorhersagehorizonte.
+Die Feature-Target-Korrelation zeigt, dass nur wenige Features überhaupt einen nennenswerten linearen Zusammenhang mit den zukünftigen Returns haben. Am stärksten ist log_ret_1m mit dem 1-Minuten-Target korreliert (ca. 0,37), gefolgt von index_log_ret_1m (ca. 0,26). Für längere Horizonte nimmt die Korrelation dieser beiden Features deutlich ab, z.B. auf nur noch etwa 0,13 beim 15-Minuten-Return. Alle anderen Features – weitere Log-Returns, EMA-Spread, Realized Volatility, Volumen-Maße, High-Low-Span und News-Sentiment – liegen im Bereich von 0,00 bis maximal ca. 0,1 und tragen damit nur sehr schwache lineare Signale bei. Insgesamt bestätigt die Matrix, dass kurzfristige Intraday-Returns stark vom Rauschen dominiert werden, insbesondere für längere Vorhersagehorizonte.
 
 
 
@@ -407,7 +407,6 @@ Im dritten Schritt verwenden wir ein LSTM, das stärker auf Zeitreihen-Strukture
 - Optimizer & Training:
   - Adam (LR = 1e-3)
   - ReduceLROnPlateau (Faktor 0.5, Patience 2)
-  - Early Stopping mit sehr kleiner Patience (1 Epoche), um Trainingszeit zu sparen
   - Batch Size: 32, Sequenzen pro Symbol werden zu einem großen Datensatz konkateniert
 
 #### LSTM – Plots (erste 200 Samples)
