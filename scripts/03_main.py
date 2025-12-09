@@ -63,10 +63,10 @@ def main():
     # FeatureBuilder-Konfiguration
     # ------------------------------------------------------------------
     config = FeatureBuilderConfig(
-        ema_windows=[15, 30, 60,],
-        realized_vol_windows=[15, 30, 60,],
-        volume_zscore_window=60,   # Volume-Z-Score über letzte 60 Minuten
-        news_decay_lambda=0.0075,  # ~ 90 Minuten Halbwertszeit
+        ema_windows=[5, 15],
+        realized_vol_windows=[5, 10, 15],
+        volume_zscore_window=15,
+        news_decay_lambda=0.1386,
     )
 
     # ------------------------------------------------------------------

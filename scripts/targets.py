@@ -95,7 +95,7 @@ def main():
         print(f"[WARN] Keine Feature-Dateien in {processed_dir} gefunden.")
         return
 
-    windows = [15, 30, 60,]
+    windows = [1, 5, 10, 15]
 
     print(f"[INFO] Found {len(feature_files)} Feature-Dateien.")
     for path in feature_files:
@@ -108,6 +108,21 @@ def main():
 
         tb = TargetBuilder(df)
         df_with_targets = tb.calculate_return_targets(windows)
+
+        # >>> NEU: nur Zeilen behalten, in denen es in den letzten 15 Min News gab
+        if "news_age_minutes" in df_with_targets.columns:
+            before = len(df_with_targets)
+            df_with_targets = df_with_targets[
+                df_with_targets["news_age_minutes"].notna()
+                & (df_with_targets["news_age_minutes"] <= 15)
+                ]
+            after = len(df_with_targets)
+            print(
+                f"[INFO] Filter news_age_minutes <= 15min: "
+                f"{before:,} -> {after:,} Zeilen (für {symbol})"
+            )
+        else:
+            print(f"[WARN] news_age_minutes nicht in {symbol}-DataFrame gefunden.")
 
         # Neue Dateien mit Targets (Features + Targets)
         out_parquet = processed_dir / f"{symbol}_features_with_targets.parquet"

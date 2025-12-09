@@ -33,9 +33,9 @@ INDEX_SYMBOL = "QQQ"           # ETF / Index
 NEWS_FILE_NAME = "nasdaq_news_with_sentiment.parquet"
 
 # Zeitfenster (in Minuten) für Event-Study
-WIN_BEFORE = 30
-WIN_AFTER = 30
-MAX_EVENTS_PER_CAT = 1000
+WIN_BEFORE = 15
+WIN_AFTER = 15
+MAX_EVENTS_PER_CAT = 1000000
 
 # Sentiment-Schwellen
 VERY_NEG = -0.75

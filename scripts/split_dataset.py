@@ -4,43 +4,42 @@ from pathlib import Path
 from typing import List, Dict, Tuple
 
 import pandas as pd
+import torch
 import yaml
 
 # ------------------------------------------------------------
 # 1) Welche Features / Targets ins ML-Modell sollen
 # ------------------------------------------------------------
 
-FEATURE_COLS: List[str] = [
+FEATURE_COLS = [
     # Trend & Returns
-    "log_ret_1m",
-    "log_ret_15m",
-    "log_ret_60m",
+    "log_ret_1m", "log_ret_5m", "log_ret_10m", "log_ret_15m",
 
-    # EMA-basierte Trend-Signale
-    "ema_diff_15_60",
+    # EMA
+    "ema_diff_5_15",
 
-    # Volatilität (Aktie)
+    # Volatilität (reduziert)
+    "rv_5m",
     "rv_15m",
-    "rv_60m",
 
     # Volumen / Liquidität
-    "volume_zscore_60m",
+    "volume_zscore_15m",
     "avg_volume_per_trade",
     "hl_span",
 
-    # Index & relative Performance
+    # Markt
     "index_log_ret_1m",
-    "index_rv_60m",
-    "rel_log_ret_60m",
+    "index_log_ret_15m",
 
-    # News-Sentiment
+    # News
     "effective_sentiment_t",
 ]
 
-TARGET_COLS: List[str] = [
+TARGET_COLS = [
+    "target_return_1m",
+    "target_return_5m",
+    "target_return_10m",
     "target_return_15m",
-    "target_return_30m",
-    "target_return_60m",
 ]
 
 # Nur diese Symbole sollen berücksichtigt werden

@@ -55,10 +55,8 @@ def load_symbol_df(symbol: str) -> pd.DataFrame:
 def plot_ema_and_diff(df: pd.DataFrame, symbol: str, n_points: int = 300) -> None:
     """
     Plot:
-      - Close vs EMA(15) vs EMA(60)
-      - (optional) EMA-Differenz: ema_diff_15_60
-
-    Nur die letzten n_points Minuten, damit es lesbar bleibt.
+      - Close vs EMA(5) vs EMA(15)
+      - (optional) EMA-Differenz: ema_diff_5_15
     """
     symbol = symbol.upper()
     subset = df.tail(n_points).copy()
@@ -66,19 +64,19 @@ def plot_ema_and_diff(df: pd.DataFrame, symbol: str, n_points: int = 300) -> Non
     # --- Plot 1: Close + EMAs ---
     plt.figure(figsize=(12, 6))
     plt.plot(subset.index, subset["close"], label="Close", alpha=0.6)
+    if "ema_5" in subset.columns:
+        plt.plot(subset.index, subset["ema_5"], label="EMA 5", linewidth=1.5)
     if "ema_15" in subset.columns:
         plt.plot(subset.index, subset["ema_15"], label="EMA 15", linewidth=1.5)
-    if "ema_60" in subset.columns:
-        plt.plot(subset.index, subset["ema_60"], label="EMA 60", linewidth=1.5)
 
-    plt.title(f"{symbol}: Close vs EMA(15) vs EMA(60) (letzte {n_points} Minuten)")
+    plt.title(f"{symbol}: Close vs EMA(5) vs EMA(15) (letzte {n_points} Minuten)")
     plt.xlabel("Zeit")
     plt.ylabel("Preis")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(IMG_DIR / f"{symbol}_ema_15_60.png")
+    plt.savefig(IMG_DIR / f"{symbol}_ema_5_15.png")
     plt.close()
 
 
@@ -189,9 +187,10 @@ def plot_intraday_targets(
     symbol = symbol.upper()
 
     cols = [
+        "target_return_1m",
+        "target_return_5m",
+        "target_return_10m",
         "target_return_15m",
-        "target_return_30m",
-        "target_return_60m",
     ]
     cols = [c for c in cols if c in df.columns]
 
@@ -260,7 +259,7 @@ def main():
     plot_scatter_stock_vs_index(
         df,
         SYMBOL,
-        window=60,  # 60-Minuten-Returns
+        window=15,
     )
 
     print("[INFO] Erzeuge Intraday-Returns-Plot (Log-Returns) ...")
