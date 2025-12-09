@@ -4,17 +4,17 @@ FeatureBuilder für USW_Trading
 
 Baut alle Pre-Split-Features für EIN Symbol (z.B. AAPL):
 
-- 1-Minuten-Log-Returns + aggregierte Log-Returns über [15, 30, 60] Minuten
-- einfache Returns (Simple Returns) über [15, 30, 60,] Minuten
-- EMAs (Close) über [15, 30, 60,] Minuten + EMA-Diffs (15–60)
-- realisierte Volatilität über [15, 30, 60,] Minuten
+- 1-Minuten-Log-Returns + aggregierte Log-Returns über [1, 5, 10, 15] Minuten
+- einfache Returns (Simple Returns) über [1, 5, 10, 15,] Minuten
+- EMAs (Close) über [15, 30, 60,] Minuten + EMA-Diffs (5–30)
+- realisierte Volatilität über [5, 10, 15,] Minuten
 - Volume-Z-Score (rolling) basierend auf Volumen
 - High-Low-Span
 - durchschnittliches Volumen je Trade
 - Index-Features (z.B. QQQ):
-    - index_log_ret_1m und index_log_ret_{15,30,60,}m
-    - index_rv_{15,30,60,}m
-    - relative Log-Returns: rel_log_ret_{15,30,60}m = Aktie - Index
+    - index_log_ret_1m und index_log_ret_{5,10,15,}m
+    - index_rv_{1, 5,10,15,}m
+    - relative Log-Returns: rel_log_ret_{1,5,10,15}m = Aktie - Index
 - News-Sentiment-Alignment mit exponentiellem Zerfall (pro Aktie)
 
 Speichert pro Symbol ein Parquet/CSV in data/processed:
@@ -36,19 +36,19 @@ class FeatureBuilderConfig:
     ema_windows: Optional[List[int]] = None
     realized_vol_windows: Optional[List[int]] = None
     return_windows: Optional[List[int]] = None  # für log + simple returns
-    volume_zscore_window: int = 60
-    news_decay_lambda: float = 0.0075  # ~90 Minuten Halbwertszeit
+    volume_zscore_window: int = 15
+    news_decay_lambda: float = 0.1386
 
     def __post_init__(self):
         # EMAs passend zu deinen Prognosehorizonten
         if self.ema_windows is None:
-            self.ema_windows = [15, 30, 60,]
+            self.ema_windows = [5, 15]
         # Realisierte Volatilität auch über diese Fenster
         if self.realized_vol_windows is None:
-            self.realized_vol_windows = [15, 30, 60,]
+            self.realized_vol_windows = [5, 10, 15,]
         # Return-Fenster (für log + simple)
         if self.return_windows is None:
-            self.return_windows = [15, 30, 60,]
+            self.return_windows = [1, 5, 10, 15,]
 
 
 class FeatureBuilder:
@@ -136,7 +136,7 @@ class FeatureBuilder:
             self.df[f"ema_{w}"] = self.df[price_col].ewm(span=w, adjust=False).mean()
 
         # EMA-Differenzen,
-        ema_pairs = [(15, 60)]
+        ema_pairs = [(5, 15)]
         for fast, slow in ema_pairs:
             fast_col = f"ema_{fast}"
             slow_col = f"ema_{slow}"

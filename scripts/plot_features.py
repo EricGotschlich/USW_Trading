@@ -61,39 +61,42 @@ def main():
     print(f"[INFO] Gesamt-Daten: {df.shape[0]:,} Zeilen, {df.shape[1]} Spalten")
 
     target_cols = [
+        "target_return_1m",
+        "target_return_5m",
+        "target_return_10m",
         "target_return_15m",
-        "target_return_30m",
-        "target_return_60m",
-
     ]
 
     feature_cols = [
-        # Trend & Returns
+        # Trend & Returns Aktie
         "log_ret_1m",
+        "log_ret_5m",
+        "log_ret_10m",
         "log_ret_15m",
-        "log_ret_60m",
 
-        # EMA-basierte Trend-Signale
-        "ema_diff_15_60",
+        # EMA
+        "ema_diff_5_15",
 
-        # Volatilität (Aktie)
+        # Volatilität (reduziert)
+        "rv_5m",
         "rv_15m",
-        "rv_60m",
-        "hl_span",
 
         # Volumen / Liquidität
-        "volume_zscore_60m",
+        "volume_zscore_15m",
         "avg_volume_per_trade",
+        "hl_span",
 
-
-        # Index & relative Performance
+        # Markt
         "index_log_ret_1m",
-        "index_rv_60m",
-        "rel_log_ret_60m",
+        "index_log_ret_15m",
 
-        # News-Sentiment
+        # News
         "effective_sentiment_t",
     ]
+
+    # danach bleiben:
+    feature_cols = [c for c in feature_cols if c in df.columns]
+    target_cols = [c for c in target_cols if c in df.columns]
 
     # Auf vorhandene Spalten filtern (falls irgendwas fehlt)
     feature_cols = [c for c in feature_cols if c in df.columns]
