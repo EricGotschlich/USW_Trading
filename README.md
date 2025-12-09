@@ -249,3 +249,184 @@ Post Split Script
 <img width="1199" height="571" alt="image3" src="https://github.com/user-attachments/assets/e74e29a4-6e17-4376-b85f-f5d5e702498d" />
 ### Y-Scaled
 <img width="1207" height="566" alt="image4" src="https://github.com/user-attachments/assets/8fb9e570-2d44-4dc2-b0ef-32168bd75b20" />
+
+
+
+<img width="3000" height="3150" alt="feature_target_correlation_matrix" src="https://github.com/user-attachments/assets/b4a7b00c-9e34-4b54-825c-3bb7e6436ae7" />
+Die Feature-Target-Korrelation zeigt, dass nur wenige Features überhaupt einen nennenswerten linearen Zusammenhang mit den zukünftigen Returns haben. Am stärksten ist log_ret_1m mit dem 1-Minuten-Target korreliert (ca. 0,37), gefolgt von index_log_ret_1m (ca. 0,26). Für längere Horizonte nimmt die Korrelation dieser beiden Features deutlich ab, z.B. auf nur noch etwa 0,13 beim 15-Minuten-Return. Alle anderen Features – weitere Log-Returns, EMA-Spread, Realized Volatility, Volumen-Maße, High-Low-Span und News-Sentiment – liegen im Bereich von 0,00 bis maximal ca. 0,1 und tragen damit nur sehr schwache lineare Signale bei. Insgesamt bestätigt die Matrix, dass kurzfristige Intraday-Returns stark vom Rauschen dominiert werden und sich selbst die „besten“ Features nur moderat zur Vorhersage eignen, insbesondere für längere Vorhersagehorizonte.
+
+
+
+## 6 – Model Training
+
+Wir haben drei Modellklassen getestet, um die vier Return-Horizonte (1m, 5m, 10m, 15m) vorherzusagen:
+
+1. Ein **Feed-Forward Neural Network (FFNN)** auf den skalierten Tabellendaten aus Step 5  
+2. Ein **einfaches RNN** mit Sliding-Window-Sequenzen  
+3. Ein **LSTM**, das Sequenzen pro Symbol direkt auf den Zeitreihen-Splits nutzt  
+
+Alle Modelle werden gegen eine einfache Zero-Return-Baseline (Vorhersage = 0) mit MSE / RMSE / MAE / R² verglichen. 
+
+
+---
+
+### 6.1 Feed-Forward Neural Network (FFNN)
+
+Das FFNN dient als tabellarische Referenz: Es nutzt die in Step 5 erzeugten, skalierten Feature-Matrizen (inklusive Symbol-Dummies) und sagt die vier Return-Horizonte direkt aus einem einzelnen Zeit-Snapshot vorher. Zeitliche Abhängigkeiten werden nicht explizit modelliert.
+
+#### FFNN-Skript
+
+[`scripts/ffnn_modeling.py`](scripts/ffnn_modeling.py) 
+
+#### FFNN-Architektur & Training
+
+- Input: alle skalierten Features aus `X_*_scaled.parquet` 
+- Output: 4 Targets  
+  (`target_return_1m`, `target_return_5m`, `target_return_10m`, `target_return_15m`)
+- Architektur:
+  - Hidden 1: 64 Neuronen  
+  - Hidden 2: 32 Neuronen  
+  - Aktivierung: ReLU
+  - Dropout: p = 0.2 nach jeder Hidden-Schicht
+- Optimizer: AdamW (LR = 1e-3, Weight Decay = 1e-4)
+- Batch-Größe: 4096
+
+#### FFNN – Actuals vs. Predicted (erste 500 Samples)
+
+![](images/06_ffnn_actual_vs_predicted.png)
+
+Auf dem Testset folgt das FFNN den vielen kleinen Intraday-Bewegungen insbesondere beim 1-Minuten-Horizon relativ gut. Die vorhergesagten Kurven liegen eng um die tatsächlichen Returns und bilden die typische „Zitterbewegung“ des Marktes ab. 
+
+Bei längeren Horizonten (5m, 10m, 15m) werden die Vorhersagen deutlich glatter: Das Modell bleibt stärker um 0 zentriert und unterschätzt große Ausschläge. Extreme Spikes im Return (plötzliche Sprünge nach oben oder unten) werden meist nicht in ihrer Amplitude getroffen. Das ist für Intraday-Returns erwartbar, zeigt aber, dass das Modell primär die häufigen, kleinen Bewegungen lernt und seltene Extrembewegungen kaum abbildet.
+
+#### FFNN – Loss-Kurven
+
+![](images/06_ffnn_loss_curves.png)
+
+Die Train- und Validation-Losses fallen in den ersten Epochen schnell ab und laufen dann in ein Plateau. Die beiden Kurven liegen relativ dicht beieinander, was gegen starkes Overfitting spricht. Gleichzeitig flacht die Verbesserung deutlich ab – mit der aktuellen Feature-Menge und Architektur ist nur begrenzter zusätzlicher Performance-Gewinn zu erwarten, ohne das Modell grundsätzlich zu verändern oder weitere Informationen (z.B. bessere Features oder mehr Daten) zu nutzen.
+
+#### FFNN – Quantitative Ergebnisse
+
+(Zero-Baseline = immer Return 0 vorhersagen)
+
+- **Baseline (Zero-Return)**  
+  - MSE ≈ 0.0773  
+  - RMSE ≈ 0.2780  
+  - MAE ≈ 0.1401  
+  - R² ≈ 0.00
+
+- **FFNN (Test-Set, echte Returns)**  
+  - MSE ≈ 0.0746  
+  - RMSE ≈ 0.2731  
+  - MAE ≈ 0.1348  
+  - R² ≈ 0.035
+
+Das FFNN reduziert den mittleren quadratischen Fehler gegenüber der trivialen Zero-Baseline nur leicht (R² ≈ 3,5 %). Das zeigt, dass kurzfristige Intraday-Returns stark vom Rauschen dominiert werden und sich aus den verfügbaren Features nur ein begrenzter, aber messbarer Edge herausholen lässt.
+
+
+---
+
+### 6.2 Basic RNN
+
+Als nächsten Schritt testen wir ein einfaches rekurrentes neuronales Netz (RNN), das explizit mit zeitlichen Sequenzen arbeitet. Statt jeden Timestamp isoliert zu betrachten wie beim FFNN, bekommt das RNN kleine Zeitfenster (Sliding Windows) der skalierten Features als Input. Ziel ist es, kurzfristige Muster im Verlauf besser auszunutzen.
+
+#### RNN-Skript
+
+[`scripts/rnn_modeling.py`](scripts/rnn_modeling.py)
+
+#### RNN-Architektur & Datenaufbau
+
+- Eingangsdaten:
+  - Sequenzen der Form `X[t−19 … t]` mit Sequenzlänge **20**
+  - Basierend auf den Step-5-Parquets `X_*_scaled.parquet` / `y_*_scaled.parquet`
+  - Enthalten alle numerischen Features **inkl. Symbol-Dummies** pro Zeitschritt
+- Targets:
+  - `y[t]` mit den vier Return-Horizonten in skaliertem Raum, inverse Transform via `scaler_y`
+- Modell:
+  - Basic `nn.RNN`
+  - Input Size = Anzahl Features
+  - Hidden Size = 64
+  - Num Layers = 1
+  - Output: 4 Targets über eine lineare Projektion des letzten Zeitschritts
+- Loss: MSE
+- Optimizer: Adam (LR = 1e-3)
+
+#### RNN – Ergebnisse & Plots
+
+![](images/modeling/06_rnn_results.png)
+
+In den Plots ist zu sehen, dass das BasicRNN die 1-Minuten-Returns etwas glättet und einen Teil der lokalen Muster einfängt. Die vorhergesagten Kurven liegen überwiegend in der Nähe von 0 und reagieren weniger stark auf die vielen, sehr schnellen Schwankungen der Originaldaten. Für 5m, 10m und 15m werden die Vorhersagen noch glatter und die Amplituden deutlich unterschätzt; starke Ausschläge werden kaum mitgemacht.
+
+Die Loss-Kurven zeigen einen kontinuierlichen Abfall des Trainings- und Validierungs-Losses. Gleichzeitig bleibt das absolute Fehlerniveau relativ hoch und nähert sich nur langsam einem Plateau an. Insgesamt liegt die Performance des RNNs in unseren Läufen sehr nahe an der Zero-Return-Baseline: Es gibt leichte Verbesserungen bei sehr kurzen Horizonten, aber keine klare, deutliche Überlegenheit gegenüber dem FFNN.
+
+Interpretation:
+
+- Das einfache RNN hat zwar Zugang zu Sequenzinformationen, ist mit nur einer Layer und 64 Hidden Units aber relativ schwach und tendiert zur **Unteranpassung (Underfitting)**.
+
+
+---
+
+### 6.3 LSTM
+
+Im dritten Schritt verwenden wir ein LSTM, das stärker auf Zeitreihen-Strukturen ausgelegt ist. Im Unterschied zum RNN arbeitet das LSTM direkt auf den **Zeitreihen-Splits pro Symbol** (`usw_*_clean.parquet`) und baut Sequenzen getrennt je Aktie. Dadurch kann das Modell saubere historische Verläufe pro Symbol sehen, statt gemischte Sliding-Windows über alle Symbole.
+
+#### LSTM-Skript
+
+[`scripts/lstm_modeling.py`](scripts/lstm_modeling.py) 
+
+#### LSTM-Datenaufbau & Architektur
+
+- Eingangsdaten:
+  - Train/Val/Test aus `data/processed/splits/usw_*_clean.parquet`
+  - Gruppierung **pro `symbol`**
+  - Features: nur die numerischen `FEATURE_COLS` 
+  - Eigener `StandardScaler` auf `FEATURE_COLS` für X, `scaler_y` aus Step 5 für die Targets
+  - Sequenzen der Form `X[t−29 … t]` mit **Sequenzlänge 30**, Target = `y[t]`
+- Targets:
+  - vier Return-Horizonte auf Originalskala via inverse Transform
+- Architektur:
+  - 2-lagiges LSTM
+  - Hidden Size: 128
+  - Dropout: 0.2 (zwischen den LSTM-Layern)
+  - Fully Connected Layer auf die letzte Hidden-State-Repräsentation
+- Optimizer & Training:
+  - Adam (LR = 1e-3)
+  - ReduceLROnPlateau (Faktor 0.5, Patience 2)
+  - Early Stopping mit sehr kleiner Patience (1 Epoche), um Trainingszeit zu sparen
+  - Batch Size: 32, Sequenzen pro Symbol werden zu einem großen Datensatz konkateniert
+
+#### LSTM – Plots (erste 200 Samples)
+
+![](images/modeling/06_lstm_results.png)
+
+Für den 1-Minuten-Horizont folgt das LSTM den tatsächlichen Returns am ehesten: Die Vorhersagen bewegen sich mit der Zeit um die echten Werte und fangen Richtung und grobe Struktur einiger Bewegungen ein, bleiben aber in der Amplitude merklich kleiner. Für 5m, 10m und 15m sind die Vorhersagen noch stärker um 0 zusammengezogen, sodass größere Ausschläge im Markt fast vollständig „weggemittelt“ werden.
+
+Im Loss-Plot ist zu sehen, dass das Training sehr schnell stoppt: Bereits nach wenigen Epochen erreicht der Validierungs-Loss sein Minimum, und Early Stopping greift. Dadurch bleibt das Modell eher konservativ und tendiert zu **stark geglätteten** Vorhersagen.
+
+#### LSTM – Quantitative Ergebnisse
+
+Ein exemplarischer Run (gleiche Daten wie beim FFNN) zeigt:
+
+- **Baseline (Zero-Return)**  
+  - MSE :  7.725123e-02
+  - RMSE:  2.779410e-01
+  - MAE :  1.399844e-01
+  - R^2 :  -0.0001
+
+- **LSTM (gesamt, alle 4 Targets)**  
+  - MSE :  7.509433e-02
+  - RMSE:  2.740334e-01
+  - MAE :  1.350939e-01
+  - R^2 :  0.0278
+
+
+[METRICS] Pro Target:
+  Target Return 1m: MSE=1.559110e-02 | RMSE=1.248643e-01 | MAE=5.824056e-02 | R^2=0.1296
+  Target Return 5m: MSE=5.036982e-02 | RMSE=2.244322e-01 | MAE=1.168164e-01 | R^2=0.0439
+  Target Return 10m: MSE=9.349006e-02 | RMSE=3.057614e-01 | MAE=1.636007e-01 | R^2=0.0217
+  Target Return 15m: MSE=1.409328e-01 | RMSE=3.754102e-01 | MAE=2.017170e-01 | R^2=0.0133
+
+
+Momentan profitiert nur der sehr kurzfristige Horizont spürbar von der sequenziellen LSTM-Struktur; für längere Horizons überwiegt der Glättungseffekt und die Vorhersagen sind zu konservativ.
+
+---
