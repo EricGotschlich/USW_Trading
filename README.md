@@ -464,9 +464,9 @@ scripts/backtesting.py
     - Exit wenn signal < exit_threshold (-0.03%)
 
 
-### Backtesting Plot (Feed Forward)
+### Backtesting Plot Equity (Feed Forward)
 <img width="2600" height="1000" alt="equity_ffnn" src="https://github.com/user-attachments/assets/f61d4a75-d619-4160-b3e1-e3fa506d6619" />
--Overall Performance:
+- Overall Performance:
    - total_return: 5.958%
    - max_drawdown: -2.118%
    - win_rate: 38.673%
@@ -475,11 +475,31 @@ scripts/backtesting.py
 
 
 
-### Backtesting Plot (LSTM)
+### Backtesting Plot Equity (LSTM)
 <img width="2600" height="1000" alt="equity_lstm" src="https://github.com/user-attachments/assets/6f5b1907-02bb-4fd4-95e0-c59ccf820718" />
--Overall Performance:
+- Overall Performance:
    - total_return: 3.387%
    - max_drawdown: -3.407%
    - win_rate: 37.936%
    - avg_trade: 0.007%
    - median_trade: -0.084%
+
+
+### Backtesting Plot Trade Entries (Feed Forward)
+<img width="2600" height="800" alt="trade_entries_ffnn" src="https://github.com/user-attachments/assets/9aa506fd-a3d5-4d75-b233-a723c473ea62" />
+
+
+### Backtesting Plot Trade Entries (LSTM)
+<img width="2600" height="800" alt="trade_entries_lstm" src="https://github.com/user-attachments/assets/17e257c6-a195-4e21-818f-acba6554364d" />
+
+
+
+### Backtesting Plot Trades (Feed Forward)
+<img width="2600" height="2400" alt="examples_ffnn_META" src="https://github.com/user-attachments/assets/200aecc5-8d17-41fe-b18e-48ae04e95cc5" />
+
+
+
+### Backtesting Plot Trades (LSTM)
+<img width="2600" height="2400" alt="examples_lstm_META" src="https://github.com/user-attachments/assets/9b78292b-1549-45d0-a326-56046b08f746" />
+
+<img width="2600" height="2400" alt="examples_lstm_TSLA" src="https://github.com/user-attachments/assets/7e1f05a6-ffcf-4743-837f-77453c835b6a" />
