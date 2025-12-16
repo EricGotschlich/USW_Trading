@@ -550,3 +550,24 @@ Gesamt: +$10.32
 - win_rate: 8/9 = 88.9% (1 Loss-Trade, META)
 - avg_trade: +0.1256% pro Trade (+$1.15)
 - median_trade: +0.1288% pro Trade (+$1.23)
+
+
+- Beispiel-Trade 1 – META
+  - Buy: 1 META → −$650.98 (Dec 15, 2025, 09:20:50 PM)
+  - Sell: 1 META → +$650.59 (Dec 15, 2025, 09:33:17 PM)
+  - Realisierter PnL: −$0.39
+ 
+- Beispiel-Trade 2 – TSLA
+  - Buy: 2 TSLA @ $956.82 (Dec 15, 2025, 09:46:12 PM) → −$956.82
+  - Sell: 1 TSLA @ $480.01 + Sell: 1 TSLA @ $480.00 (Dec 15, 2025, 09:53:46 PM) → +$960.01
+  - Realisierter PnL: +$3.19
+ 
+
+---
+
+## Next Steps
+- Signal- und Entscheidungslogik verbessern
+- Feature-Qualität erhöhen
+- Modell verbessern
+- Weitere Zeithorizonte betrachten
+- Shorting hinzufügen
