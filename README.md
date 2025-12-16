@@ -448,7 +448,8 @@ Momentan profitiert nur der sehr kurzfristige Horizont spürbar von der sequenzi
 ## 7 - Backtesting
 
 ### 7.1 Backtesting Skript (Feed Forward % LSTM)
-scripts/backtesting.py
+[scripts/backtesting.py](scripts/backtesting.py)
+
 
 - Entry Points: 
   - Long-only  
@@ -512,18 +513,15 @@ scripts/backtesting.py
 ## 8 - Paper Trading
 
 ### 8.1 Paper Trading Skript (Feed Forward % LSTM)
-scripts/paper_trade_lstm.py
+[scripts/paper_trade_lstm.py](scripts/paper_trade_lstm.py)
 
-Broker: Alpaca Paper Account 
 
-Aktien: META, NVDA, TSLA 
-
-Signal: Das trainierte Modell erzeugt pro Minute Vorhersagen für mehrere Horizonte. Daraus wird ein Signal gebildet:
-signal = 0.6 · pred(5m) + 0.4 · pred(15m)
-
-Order-Typ: Entries werden als Market Orders gesendet wenn das Signal positiv genug ist. Exits passieren durch negative Signale Max-Hold Überschreitung oder TP/SL .
-
-Positionsgröße: Stückzahl pro Symbol ist auf einen Wert von 1000 USD begrenzt.
+- Setup
+  - Broker: Alpaca Paper Account
+  - Aktien: META, NVDA, TSLA
+  - Signal: Das trainierte Modell erzeugt pro Minute Vorhersagen für mehrere Horizonte. Daraus wird ein Signal gebildet: signal = 0.6 · pred(5m) + 0.4 · pred(15m)
+  - Order-Typ: Entries werden als Market Orders gesendet wenn das Signal positiv genug ist. Exits passieren durch negative Signale Max-Hold Überschreitung oder TP/SL .
+  - Positionsgröße: Stückzahl pro Symbol ist auf einen Wert von 1000 USD begrenzt.
 
 
 - Aktien Performance:
