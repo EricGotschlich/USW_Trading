@@ -96,27 +96,29 @@ def create_sequences(
     seq_len: int = 50
 ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Baut Sequenzen nur aus der Vergangenheit:
-      Input:  X[t-seq_len+1 .. t]
-      Target: y[t]
+    Empfehlung B (aligned, "teacher-like aber korrekt"):
 
-    X_arr: (N, n_features)
-    y_arr: (N, n_targets)
+    Wir wollen, dass die Sequenz bis zum Zeitpunkt t geht und das Target auch zu t gehört.
+
+      X_seq[i] = X[i+1 : i+1+seq_len]   -> endet bei t = i+seq_len
+      y_seq[i] = y[i+seq_len]           -> Target am gleichen Zeitpunkt t
+
+    Dadurch hat das Modell die "letzte" Feature-Zeile (für t) auch wirklich im Input.
     """
-    X_seq, y_seq = [], []
-
-    if len(X_arr) < seq_len:
-        # zu wenig Daten
+    n = len(X_arr)
+    if n <= seq_len:
         return (
             np.empty((0, seq_len, X_arr.shape[1]), dtype=np.float32),
             np.empty((0, y_arr.shape[1]), dtype=np.float32),
         )
 
-    for i in range(seq_len - 1, len(X_arr)):
-        X_seq.append(X_arr[i - seq_len + 1 : i + 1])
-        y_seq.append(y_arr[i])
+    X_seq, y_seq = [], []
+    for i in range(n - seq_len):
+        X_seq.append(X_arr[i + 1 : i + 1 + seq_len])  # (seq_len, n_features)
+        y_seq.append(y_arr[i + seq_len])              # (n_targets,)
 
     return np.asarray(X_seq, dtype=np.float32), np.asarray(y_seq, dtype=np.float32)
+
 
 
 def build_sequences_for_split(
@@ -232,6 +234,10 @@ def main():
     # Eigenen X-Scaler NUR für die 13 FEATURE_COLS fitten
     scaler_X = StandardScaler()
     scaler_X.fit(train_df[FEATURE_COLS].values)
+    # Nach scaler_X.fit(train_df[FEATURE_COLS].values)
+    scaler_x_lstm_path = ML_DIR / "scaler_X_lstm.joblib"
+    joblib.dump(scaler_X, scaler_x_lstm_path)
+    print(f"[INFO] Saved LSTM scaler_X to: {scaler_x_lstm_path}")
 
     # Index sicher als DatetimeIndex
     for name, df in [("train", train_df), ("val", val_df), ("test", test_df)]:
@@ -254,7 +260,10 @@ def main():
     # Eigenen X-Scaler NUR auf FEATURE_COLS fitten
     scaler_X = StandardScaler()
     scaler_X.fit(train_df[FEATURE_COLS].values)
-
+    # Nach scaler_X.fit(train_df[FEATURE_COLS].values)
+    scaler_x_lstm_path = ML_DIR / "scaler_X_lstm.joblib"
+    joblib.dump(scaler_X, scaler_x_lstm_path)
+    print(f"[INFO] Saved LSTM scaler_X to: {scaler_x_lstm_path}")
 
     seq_len = 30  # kürzere Sequenz für schnelleres Training
     print(f"[INFO] Baue Sequenzen mit Länge {seq_len} ...")
@@ -368,6 +377,26 @@ def main():
     if best_state_dict is not None:
         model.load_state_dict(best_state_dict)
         print(f"[INFO] Bestes Modell mit Val Loss={best_val_loss:.6f} geladen.")
+
+    # -------------------------------
+    # SAVE: Model + Scaler + Feature list (wichtig fürs Deployment!)
+    # -------------------------------
+    MODELS_SUBDIR = MODELS_DIR / "lstm"
+    MODELS_SUBDIR.mkdir(parents=True, exist_ok=True)
+
+    model_path = MODELS_SUBDIR / "best_lstm_model.pth"
+    torch.save(best_state_dict, model_path)
+    print(f"[INFO] Bestes LSTM gespeichert unter: {model_path}")
+
+    scaler_x_path = MODELS_SUBDIR / "scaler_X_lstm.joblib"
+    joblib.dump(scaler_X, scaler_x_path)
+    print(f"[INFO] LSTM scaler_X gespeichert unter: {scaler_x_path}")
+
+    feat_path = MODELS_SUBDIR / "features_lstm.txt"
+    with open(feat_path, "w", encoding="utf-8") as f:
+        for c in FEATURE_COLS:
+            f.write(f"{c}\n")
+    print(f"[INFO] LSTM Feature-Liste gespeichert unter: {feat_path}")
 
     # --- Evaluation auf Test-Set ---
     model.eval()

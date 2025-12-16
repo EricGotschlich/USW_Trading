@@ -108,15 +108,13 @@ print(f"X_test:  {X_test.shape},  y_test:  {y_test.shape}")
 scaler_y = joblib.load(ML_DIR / "scaler_y.joblib")
 
 # -----------------------------------------------------------
-# Targets für Training/Validation aggressiver clippen (±2σ)
+# Kein Target-Clipping (wie beim Lehrer)
 # -----------------------------------------------------------
-CLIP_SIGMA = 2.0
-print(f"\n[INFO] Clippe y_train/y_val im skalierten Raum auf ±{CLIP_SIGMA}σ ...")
-y_train_clipped = np.clip(y_train, -CLIP_SIGMA, CLIP_SIGMA)
-y_val_clipped   = np.clip(y_val,   -CLIP_SIGMA, CLIP_SIGMA)
+print("\n[INFO] Kein Target-Clipping aktiv (Teacher-like).")
+y_train_clipped = y_train
+y_val_clipped   = y_val
+y_test_clipped  = y_test
 
-# Test bleibt unverändert
-y_test_clipped = y_test.copy()
 
 # -----------------------------------------------------------
 # Tensors & DataLoader
@@ -174,32 +172,11 @@ model = MLP(in_dim, hidden1, hidden2, out_dim, dropout_p=dropout_p).to(device)
 print(f"\n[INFO] Modell:\n{model}")
 
 # -----------------------------------------------------------
-# Gewichtete Huber-Loss
+# Loss & Optimizer (Teacher-like)
 # -----------------------------------------------------------
+criterion = nn.MSELoss()
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-5)
 
-# Gewichte pro Target: [1m, 5m, 10m, 15m]
-# -> 1m am wichtigsten, dann 5m
-loss_weights = torch.tensor([2.0, 1.5, 1.0, 1.0], device=device)  # shape (4,)
-beta = 1.0  # Huber-Parameter
-
-def weighted_huber_loss(pred: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """
-    SmoothL1/Huber pro Komponente, dann mit loss_weights gewichten.
-    """
-    diff = pred - target
-    abs_diff = diff.abs()
-    # Huber-Formel
-    huber = torch.where(abs_diff < beta,
-                        0.5 * (abs_diff ** 2) / beta,
-                        abs_diff - 0.5 * beta)
-    # (batch_size, 4) * (4,) -> (batch_size, 4)
-    weighted = huber * loss_weights
-    return weighted.mean()
-
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode="min", factor=0.5, patience=2
-)
 
 # -----------------------------------------------------------
 # Training mit Early Stopping
@@ -226,7 +203,7 @@ for epoch in range(1, max_epochs + 1):
 
         optimizer.zero_grad()
         preds = model(xb)
-        loss = weighted_huber_loss(preds, yb)
+        loss = criterion(preds, yb)
         loss.backward()
         optimizer.step()
 
@@ -243,13 +220,12 @@ for epoch in range(1, max_epochs + 1):
             xb = xb.to(device, non_blocking=True)
             yb = yb.to(device, non_blocking=True)
             preds = model(xb)
-            loss = weighted_huber_loss(preds, yb)
+            loss = criterion(preds, yb)
             running_val_loss += loss.item() * xb.size(0)
 
     epoch_val_loss = running_val_loss / len(val_loader.dataset)
     val_loss_hist.append(epoch_val_loss)
 
-    scheduler.step(epoch_val_loss)
 
     print(
         f"Epoch {epoch:02d} | "
@@ -268,7 +244,7 @@ for epoch in range(1, max_epochs + 1):
             break
 
 print("\n[INFO] Training beendet.")
-print(f"[INFO] Beste Validation-Loss (skaliert, gewichteter Huber): {best_val_loss:.6f}")
+print(f"[INFO] Beste Validation-Loss: {best_val_loss:.6f}")
 print(f"[INFO] Bestes Modell gespeichert unter: {best_model_path}")
 
 # -----------------------------------------------------------

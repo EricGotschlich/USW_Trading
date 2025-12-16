@@ -70,28 +70,20 @@ class BasicRNN(nn.Module):
 # -----------------------------------------------------------
 # Sequenz-Helfer
 # -----------------------------------------------------------
-def create_sequences(X: np.ndarray, y: np.ndarray, seq_len: int = 10):
+def create_sequences(X: np.ndarray, y: np.ndarray, seq_len: int):
     """
-    Baut einfache Sliding-Window-Sequenzen:
 
-      X_seq[i] = X[i : i+seq_len]
-      y_seq[i] = y[i+seq_len-1]
+    Wir wollen Target y[t] vorhersagen und dafür Features bis t sehen.
+    Daher nehmen wir Sequenzen, die bei t enden:
 
-    X: (N, n_features)
-    y: (N, n_targets)
+      X_seq[i] = X[i+1 : i+1+seq_len]   # endet bei t = i+seq_len
+      y_seq[i] = y[i+seq_len]           # Target am gleichen Zeitpunkt t
     """
-    assert len(X) == len(y)
-    if len(X) < seq_len:
-        return (
-            np.empty((0, seq_len, X.shape[1]), dtype=np.float32),
-            np.empty((0, y.shape[1]), dtype=np.float32),
-        )
-
     X_seq, y_seq = [], []
-    for i in range(len(X) - seq_len + 1):
-        X_seq.append(X[i : i + seq_len])
-        y_seq.append(y[i + seq_len - 1])
-
+    n = len(X)
+    for i in range(n - seq_len):
+        X_seq.append(X[i + 1 : i + 1 + seq_len])  # (seq_len, n_features), endet bei i+seq_len
+        y_seq.append(y[i + seq_len])              # (n_targets,)
     return np.asarray(X_seq, dtype=np.float32), np.asarray(y_seq, dtype=np.float32)
 
 
