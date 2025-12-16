@@ -444,3 +444,42 @@ Ein exemplarischer Run zeigt:
 Momentan profitiert nur der sehr kurzfristige Horizont spürbar von der sequenziellen LSTM-Struktur; für längere Horizons überwiegt der Glättungseffekt und die Vorhersagen sind zu konservativ.
 
 ---
+
+## 7 - Backtesting
+
+### 7.1 Deployment Skript (Feed Forward % LSTM)
+scripts/backtesting.py
+
+- Entry Points: 
+  - Long-only  
+  - Entry-Bedingung:
+    - Signal aus Return Vorhersagen von 5 Minuten und 15 Minuten ist größer als entry_threshold (0.1%) 
+    - Zusätzlich muss die 3-Minuten-Prognose positiv sein. 
+
+- Exit Points 
+  - Eine offene Position wird geschlossen, sobald eine der folgenden Bedingungen erfüllt ist: 
+    - Exit wenn der Trade-Return seit Entry >= tp (+0.7%)
+    - Exit wenn der Trade-Return seit Entry <= -sl (−0.3%)
+    - Exit wenn die Haltedauer in echten Minuten >= max_hold (15 Minuten)
+    - Exit wenn signal < exit_threshold (-0.03%)
+
+
+### Backtesting Plot (Feed Forward)
+<img width="2600" height="1000" alt="equity_ffnn" src="https://github.com/user-attachments/assets/f61d4a75-d619-4160-b3e1-e3fa506d6619" />
+-Overall Performance:
+   - total_return: 5.958%
+   - max_drawdown: -2.118%
+   - win_rate: 38.673%
+   - avg_trade: 0.018%
+   - median_trade: -0.110%
+
+
+
+### Backtesting Plot (LSTM)
+<img width="2600" height="1000" alt="equity_lstm" src="https://github.com/user-attachments/assets/6f5b1907-02bb-4fd4-95e0-c59ccf820718" />
+-Overall Performance:
+   - total_return: 3.387%
+   - max_drawdown: -3.407%
+   - win_rate: 37.936%
+   - avg_trade: 0.007%
+   - median_trade: -0.084%
