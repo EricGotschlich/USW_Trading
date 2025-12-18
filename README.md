@@ -444,3 +444,130 @@ Ein exemplarischer Run zeigt:
 Momentan profitiert nur der sehr kurzfristige Horizont spürbar von der sequenziellen LSTM-Struktur; für längere Horizons überwiegt der Glättungseffekt und die Vorhersagen sind zu konservativ.
 
 ---
+
+## 7 - Backtesting
+
+### 7.1 Backtesting Skript (Feed Forward % LSTM)
+[scripts/backtesting.py](scripts/backtesting.py)
+
+
+- Entry Points: 
+  - Long-only  
+  - Entry-Bedingung:
+    - Signal aus Return Vorhersagen von 5 Minuten und 15 Minuten ist größer als entry_threshold (0.1%) 
+    - Zusätzlich muss die 3-Minuten-Prognose positiv sein. 
+
+- Exit Points 
+  - Eine offene Position wird geschlossen, sobald eine der folgenden Bedingungen erfüllt ist: 
+    - Exit wenn der Trade-Return seit Entry >= tp (+0.7%)
+    - Exit wenn der Trade-Return seit Entry <= -sl (−0.3%)
+    - Exit wenn die Haltedauer in echten Minuten >= max_hold (15 Minuten)
+    - Exit wenn signal < exit_threshold (-0.03%)
+
+
+### Backtesting Plot Equity (Feed Forward)
+<img width="2600" height="1000" alt="equity_ffnn" src="https://github.com/user-attachments/assets/f61d4a75-d619-4160-b3e1-e3fa506d6619" />
+- Overall Performance:
+   - total_return: 5.958%
+   - max_drawdown: -2.118%
+   - win_rate: 38.673%
+   - avg_trade: 0.018%
+   - median_trade: -0.110%
+
+
+
+### Backtesting Plot Equity (LSTM)
+<img width="2600" height="1000" alt="equity_lstm" src="https://github.com/user-attachments/assets/6f5b1907-02bb-4fd4-95e0-c59ccf820718" />
+- Overall Performance:
+   - total_return: 3.387%
+   - max_drawdown: -3.407%
+   - win_rate: 37.936%
+   - avg_trade: 0.007%
+   - median_trade: -0.084%
+
+
+### Backtesting Plot Trade Entries (Feed Forward)
+<img width="2600" height="800" alt="trade_entries_ffnn" src="https://github.com/user-attachments/assets/9aa506fd-a3d5-4d75-b233-a723c473ea62" />
+
+
+### Backtesting Plot Trade Entries (LSTM)
+<img width="2600" height="800" alt="trade_entries_lstm" src="https://github.com/user-attachments/assets/17e257c6-a195-4e21-818f-acba6554364d" />
+
+
+
+### Backtesting Plot Trades (Feed Forward)
+<img width="2600" height="2400" alt="examples_ffnn_META" src="https://github.com/user-attachments/assets/200aecc5-8d17-41fe-b18e-48ae04e95cc5" />
+
+
+
+### Backtesting Plot Trades (LSTM)
+<img width="2600" height="2400" alt="examples_lstm_META" src="https://github.com/user-attachments/assets/9b78292b-1549-45d0-a326-56046b08f746" />
+
+
+
+<img width="2600" height="2400" alt="examples_lstm_TSLA" src="https://github.com/user-attachments/assets/7e1f05a6-ffcf-4743-837f-77453c835b6a" />
+
+
+---
+
+## 8 - Paper Trading
+
+### 8.1 Paper Trading Skript (Feed Forward % LSTM)
+[scripts/paper_trade_lstm.py](scripts/paper_trade_lstm.py)
+
+
+- Setup
+  - Broker: Alpaca Paper Account
+  - Aktien: META, NVDA, TSLA
+  - Signal: Das trainierte Modell erzeugt pro Minute Vorhersagen für mehrere Horizonte. Daraus wird ein Signal gebildet: signal = 0.6 · pred(5m) + 0.4 · pred(15m)
+  - Order-Typ: Entries werden als Market Orders gesendet wenn das Signal positiv genug ist. Exits passieren durch negative Signale Max-Hold Überschreitung oder TP/SL .
+  - Positionsgröße: Stückzahl pro Symbol ist auf einen Wert von 1000 USD begrenzt.
+
+
+- Aktien Performance:
+  - Realisierter Netto-Cashflow aus dem Log (Sell − Buy):
+    - TSLA: +$6.22
+    - NVDA: +$3.73
+    - META: +$0.37
+
+Gesamt: +$10.32
+
+
+- Time Frame:
+  - Trading-Session: am Dec 15, 2025 zwischen ca. 20:44–21:53.
+ 
+- Time Frame Performance:
+  - Aufgeteilt in drei Trading-Fenster (jeweils alle drei Symbole):
+    - 20:44 → 21:13 ca. +$3.72
+    - 21:20 → 21:37 ca. +$1.49
+    - 21:46 → 21:53 ca. +$5.11
+
+   
+### Paper Trade Equity (Feed Forward)
+<img width="993" height="643" alt="image" src="https://github.com/user-attachments/assets/c6b95818-c43d-4320-b319-e312eae489b5" />
+
+- Total_return: +$10.32 / +0.0103%
+- win_rate: 8/9 = 88.9% (1 Loss-Trade, META)
+- avg_trade: +0.1256% pro Trade (+$1.15)
+- median_trade: +0.1288% pro Trade (+$1.23)
+
+
+- Beispiel-Trade 1 – META
+  - Buy: 1 META → −$650.98 (Dec 15, 2025, 09:20:50 PM)
+  - Sell: 1 META → +$650.59 (Dec 15, 2025, 09:33:17 PM)
+  - Realisierter PnL: −$0.39
+ 
+- Beispiel-Trade 2 – TSLA
+  - Buy: 2 TSLA @ $956.82 (Dec 15, 2025, 09:46:12 PM) → −$956.82
+  - Sell: 1 TSLA @ $480.01 + Sell: 1 TSLA @ $480.00 (Dec 15, 2025, 09:53:46 PM) → +$960.01
+  - Realisierter PnL: +$3.19
+ 
+
+---
+
+## Next Steps
+- Signal- und Entscheidungslogik verbessern
+- Feature-Qualität erhöhen
+- Modell verbessern
+- Weitere Zeithorizonte betrachten
+- Shorting hinzufügen
