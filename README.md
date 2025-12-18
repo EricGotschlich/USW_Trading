@@ -34,7 +34,7 @@ Ruft rohe Marktdaten und Nachrichtenartikel für die ausgewählten Nasdaq-100-Sy
 
 **Script**
 
-[scripts/01data_acquisition.py](scripts/01data_acquisition.py)
+[scripts/01data_acquisition.py](scripts/01_data_acuisition/01data_acquisition.py)
 
 Holt **1‑minuten** Kerzen von **2020‑01‑01 bis 2025‑11‑21** und schreibt `symbol.parquet` Dateien zu `data/raw/Prices_1m_adj`.
 
@@ -44,13 +44,13 @@ Bar data AAPL Beispiel:
 
 <img width="1462" height="906" alt="image" src="https://github.com/user-attachments/assets/84685933-70b6-4efa-bc9e-2b6509b03899" />
 
-[scripts/fetch_nasdaq100_news_alpaca.py](scripts/fetch_nasdaq100_news_alpaca.py) 
+[scripts/fetch_nasdaq100_news_alpaca.py](scripts/01_data_acuisition/fetch_nasdaq100_news_alpaca.py) 
 
 Holt historische Nachrichtenartikel von **2020‑01‑01 bis 2025‑11‑21** und erstellt `symbol.parquet` Dateien zu `data/raw/News_alpaca`
 
 - `colums`: `author`, `content`, `created_at`, `headline`, `id`, `images`, `source`, `summary`, `symbols`, `updated_at`, `url`,`symbol`
 
-[scripts/news_sentiment_score.py](scripts/news_sentiment_score.py)  
+[scripts/news_sentiment_score.py](scripts/01_data_acuisition/news_sentiment_score.py)  
 
 Berechnet den Sentiment Score für jeden Nachrichtenartikel und erstellt`data/processed/nasdaq_news_with_sentiment.parquet` file.
 
@@ -163,19 +163,19 @@ Die Grafik zeigt, wie stark die Anzahl der Trades im Zeitfenster von −30 bis +
 
 ### Main Script
 
-[03_main.py](scripts/03_main.py)
+[03_main.py](scripts/03_pre_split_prep/03_main.py)
 
 ### Feature Engineering Script
 
-[stock_feature_builder.py](scripts/stock_feature_builder.py)
+[stock_feature_builder.py](scripts/03_pre_split_prep/stock_feature_builder.py)
 
 ### Target Computation Script
 
-[targets.py](scripts/targets.py)
+[targets.py](scripts/03_pre_split_prep/targets.py)
 
 ### Plotting Script
 
-[plot_features.py](scripts/plot_features.py)
+[plot_features.py](scripts/03_pre_split_prep/plot_features.py)
 
 
 ### Features Deskriptive Statistik 
@@ -233,12 +233,12 @@ Die Grafik zeigt, wie stark die Anzahl der Trades im Zeitfenster von −30 bis +
 ## 4 - Data-Split 
 Data Split Script
 
-[split_dataset.py](scripts/split_dataset.py)
+[split_dataset.py](scripts/04_split_data/split_dataset.py)
 
 
 ## 5 - Post-Split Preparation
 Post Split Script
-[post_split_scale.py](scripts/post_split_scale.py)
+[post_split_scale.py](scripts/05_post_split/post_split_scale.py)
 
 ### X-Unscaled
 <img width="1791" height="569" alt="image1" src="https://github.com/user-attachments/assets/0bde9304-a414-44a1-98de-65c81324373e" />
@@ -275,7 +275,7 @@ Das FFNN dient als tabellarische Referenz: Es nutzt die in Step 5 erzeugten, ska
 
 #### FFNN-Skript
 
-[`scripts/ffnn_modeling.py`](scripts/ffnn_modeling.py) 
+[`scripts/ffnn_modeling.py`](scripts/06_modeling/ffnn_modeling.py) 
 
 #### FFNN-Architektur & Training
 
@@ -331,7 +331,7 @@ Als nächsten Schritt testen wir ein einfaches rekurrentes neuronales Netz (RNN)
 
 #### RNN-Skript
 
-[`scripts/rnn_modeling.py`](scripts/rnn_modeling.py)
+[`scripts/rnn_modeling.py`](scripts/06_modeling/rnn_modeling.py)
 
 #### RNN-Architektur & Datenaufbau
 
@@ -387,7 +387,7 @@ Im dritten Schritt verwenden wir ein LSTM, das stärker auf Zeitreihen-Strukture
 
 #### LSTM-Skript
 
-[`scripts/lstm_modeling.py`](scripts/lstm_modeling.py) 
+[`scripts/lstm_modeling.py`](scripts/06_modeling/lstm_modeling.py) 
 
 #### LSTM-Datenaufbau & Architektur
 

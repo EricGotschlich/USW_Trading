@@ -692,7 +692,7 @@ def plot_example_trades(df_sym: pd.DataFrame, trades_sym: List[Trade], out_path:
 # -----------------------------
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", choices=["ffnn", "lstm"], default="ffnn")
+    parser.add_argument("--model", choices=["ffnn", "lstm"], default="lstm")
     parser.add_argument("--symbols", default="AAPL,AMZN,META,NVDA,TSLA")
     parser.add_argument("--seq-len", type=int, default=30)
     parser.add_argument("--entry-threshold", type=float, default=0.001)

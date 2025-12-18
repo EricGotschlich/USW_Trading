@@ -36,7 +36,7 @@ if ALPACA_API_KEY is None or ALPACA_SECRET_KEY is None:
 # Load data acquisition parameters from YAML configuration file
 # ----------------------------------------------------------------------
 # Pfad zur YAML-Datei (relativ zum Projekt-Root, wo du das Script startest)
-PARAMS_PATH = os.path.join("../conf", "params.yaml")
+PARAMS_PATH = os.path.join("../../conf", "params.yaml")
 
 with open(PARAMS_PATH, "r", encoding="utf-8") as f:
     params = yaml.safe_load(f)
