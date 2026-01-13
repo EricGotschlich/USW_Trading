@@ -687,9 +687,11 @@ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum | Im Backtest erz
 
 - Zeitraum: 02.01.2026 – 12.01.2026
 
-- Geschlossene Trades: 11
+- Buy and Hold Strategie: -978,5 $
 
-- Realized PnL: +318 $ 
+- Realized PnL: **+318 $**
+
+- Geschlossene Trades: 11
 
 - Winrate: 63,6 % (7 Gewinner, 4 Verlierer)
 
@@ -715,9 +717,11 @@ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum | Im Backtest erz
 
 - Zeitraum: 29.12.2025 – 12.01.2026
 
-- Geschlossene Trades: 61 
+- Buy and Hold Strategie: **-1274 $**
 
-- Realized PnL: +84 $
+- Realized PnL: **+84 $**
+
+- Geschlossene Trades: 61 
 
 - Winrate: ca. 52 % (32 Gewinner, 29 Verlierer)
 
