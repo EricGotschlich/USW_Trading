@@ -671,8 +671,7 @@ total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 
 
 - Zeitraum: 2. Januar 2026 bis 12. Januar 2026
 <img width="994" height="676" alt="image" src="https://github.com/user-attachments/assets/2d706dae-01cb-40e5-94c2-a7ca19a1ef45" />
-→ realisierter Gewinn von +0,32 % über den Beobachtungszeitraum.
-
+- realisierter Gewinn von +0,32 % über den Beobachtungszeitraum.
 - Im Backtest erzielt das LSTM-Modell mit den alten Parametern einen Profit von +3,4% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,32 % in 1 Woche.
 
 
@@ -680,7 +679,62 @@ total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 
 
 - Zeitraum: 29. Dezember 2025 bis 12. Januar 2026
 <img width="982" height="669" alt="image" src="https://github.com/user-attachments/assets/d9f15987-4777-4149-ab14-fdb3a4526ebf" />
-→ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum.
-
+- realisierter Gewinn von +0,08 % über den Beobachtungszeitraum.
 - Im Backtest erzielt das FFNN-Modell mit den alten Parametern einen Profit von +5,9% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,08 % in 2 Wochen.
 
+
+## Überblick über die Live-Trades
+
+### LSTM-Account
+
+- Zeitraum: 02.01.2026 – 12.01.2026
+
+- Geschlossene Trades: 11
+
+- Realized PnL: +318 $ 
+
+- Winrate: 63,6 % (7 Gewinner, 4 Verlierer)
+
+- Ø Gewinner: +63 $
+
+- Ø Verlierer: –30 $
+
+- Close-Arten:
+  - 5x Limit (Take Profit)
+  - 4x Market (Max Hold oder Exit Signal)
+  - 2x Stop (Stop Loss)
+
+- P&L nach Asset (realisiert):
+  - AMZN: +185 $ (Trades: 3)
+  - NVDA: +76 $  (Trades: 3)
+  - META: +53 $  (Trades: 1)
+  - TSLA: +45 $  (Trades: 3)
+  - AAPL: –42 $  (Trades: 1)
+
+
+
+### FFNN-Account
+
+- Zeitraum: 29.12.2025 – 12.01.2026
+
+- Geschlossene Trades: 61 
+
+- Realized PnL: +84 $
+
+- Winrate: ca. 52 % (32 Gewinner, 29 Verlierer)
+
+- Ø Gewinner: ca. +55 $
+
+- Ø Verlierer: ca. –58 $
+
+- Close-Arten:
+  - 9x Market (Max Hold oder Exit Signal)
+  - 30x Stop (Stop Loss)
+  - 22x Limit (Max Hold oder Exit Signal)
+
+- P&L nach Asset (realisiert):
+  - TSLA: +55,88 $ (Trades: 18)
+  - AMZN: +96,11 $ (Trades: 9)
+  - AAPL: +31,05 $ (Trades: 8)
+  - NVDA: -56,62 $ (Trades: 18)
+  - META: -41,99 $ (Trades: 8)
