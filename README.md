@@ -565,9 +565,78 @@ Gesamt: +$10.32
 
 ---
 
-## Next Steps
-- Signal- und Entscheidungslogik verbessern
-- Feature-Qualität erhöhen
-- Modell verbessern
-- Weitere Zeithorizonte betrachten
-- Shorting hinzufügen
+# Iteration 1
+
+## Parametertuning im Backtest
+
+Um die Handelslogik besser an das Verhalten der Modelle anzupassen, wurden die Backtesting-Parameter der Trading-Regeln angepasst und die Ergebnisse erneut auf dem Test-Split ausgewertet.
+
+### Ausgangskonfiguration 
+
+- `Modelle`: lstm, ffnn
+
+- `Symbole`: AAPL, AMZN, META, NVDA, TSLA
+
+- `Sequenzlänge`: 30 Minuten
+
+- `Entry-Signal`: 0.001
+
+- `Exit-Signal`: -0.0003
+
+- `Take-Profit`: +0,7 %
+
+- `Stop-Loss`: -0,3 %
+
+- `Max. Haltedauer`: 15 Minuten
+
+- `Cooldown`: 15 Minuten
+
+
+### Neue Konfiguration
+
+- `Modelle`: lstm, ffnn
+
+- `Symbole`: AAPL, AMZN, META, NVDA, TSLA
+
+- `Sequenzlänge`: 30 Minuten
+
+- `Entry-Signal`: 0.001 (lstm) **0.0008 (ffnn)**
+
+- `Exit-Signal`: -0.0003
+
+- `Take-Profit`: **+0,35%**
+
+- `Stop-Loss`: **-0,2%**
+
+- `Max. Haltedauer`: **10 Minuten**
+
+- `Cooldown`: **10 Minuten**
+
+
+### Backtesting Plot Equity FFNN (Ausgangskonfiguration)
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/b3406a9f-7c58-4b6d-94aa-09fb3ea5d8fb" />
+`total return`: 5.9% | `win rate`: 38.673% | `avg trade`: 0.018% | `median trade`: -0.110%
+
+### Backtesting Plot Equity FFNN (Neue Konfiguration)
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/53d6093c-03b2-4ae9-8310-26fb027eeb1f" />
+`total return`: 8.6% | `win rate`: 42.3% | `avg trade`: 0.018 % | `median trade`: −0.084 %
+
+
+### Backtesting Plot Equity LSTM (Ausgangskonfiguration)
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/3d05ff5a-0e0e-4591-8ea1-749eabb946ec" />
+`total return`: 3.387% | `win rate`: 37.9% | `avg trade`: 0.007% | `median trade`: -0.084%
+
+### Backtesting Plot Equity LSTM (Neue Konfiguration)
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/184a16ad-af3f-4fac-9475-d071ca61bb87" />
+`total return`: 9.5% | `win rate`: 41.8% | `avg trade`: 0.019% | `median trade`: −0.066 %
+
+
+### Vergleich & Interpretation
+
+- Durch die Senkung von `Entry-Signal`, `Cooldown`, `Take Profit` und `Max. Haltedauer` handeln beide Modelle häufiger, was zu mehr Gewinn führt.
+
+- Die Gesamtrendite steigt deutlich gegenüber der ursprünglichen Konfiguration:
+  – FFNN: von 5,9% auf 8.7%
+  – LSTM: von 3,4% auf 9.5%
+
+- Die Win-Rate verbessert sich von ~38% auf ~42 % 
