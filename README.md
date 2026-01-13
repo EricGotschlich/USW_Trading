@@ -671,18 +671,14 @@ total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 
 
 - Zeitraum: 2. Januar 2026 bis 12. Januar 2026
 <img width="994" height="676" alt="image" src="https://github.com/user-attachments/assets/2d706dae-01cb-40e5-94c2-a7ca19a1ef45" />
-- realisierter Gewinn von +0,32 % über den Beobachtungszeitraum.
-
-- Im Backtest erzielt das LSTM-Modell mit den alten Parametern einen Profit von +3,4% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,32 % in 1 Woche.
+realisierter Gewinn von +0,32 % über den Beobachtungszeitraum | Im Backtest erzielt das LSTM-Modell mit den alten Parametern einen Profit von +3,4% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,32 % in 1 Woche.
 
 
 ### FFNN-Account 
 
 - Zeitraum: 29. Dezember 2025 bis 12. Januar 2026
 <img width="982" height="669" alt="image" src="https://github.com/user-attachments/assets/d9f15987-4777-4149-ab14-fdb3a4526ebf" />
-- realisierter Gewinn von +0,08 % über den Beobachtungszeitraum.
-  
-- Im Backtest erzielt das FFNN-Modell mit den alten Parametern einen Profit von +5,9% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,08 % in 2 Wochen.
+realisierter Gewinn von +0,08 % über den Beobachtungszeitraum | Im Backtest erzielt das FFNN-Modell mit den alten Parametern einen Profit von +5,9% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,08 % in 2 Wochen.
 
 
 ## Überblick über die Live-Trades
