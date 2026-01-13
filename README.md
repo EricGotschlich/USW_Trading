@@ -647,7 +647,7 @@ total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 
 #### 1. Short-Positionen
 
 - **Idee**: Zusätzlich zu Long-Trades auch Short-Trades zulassen, wenn das Modell ein deutlich negatives Signal liefert
-          - Die Anzahl der Trades steigt deutlich
+- Die Anzahl der Trades steigt deutlich
 - **Ergebnis**: Shorting hatte einen klar negativen Einfluss auf die Strategiequalität
 
   
@@ -655,6 +655,32 @@ total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 
 
 - **Idee**: Statt eines festen Stop-Loss sollte ein **dynamischer Trailing Stop** eingesetzt werden
 - **Probleme**: Der **Trailing Stop** führte durch die hohe Markt-Noise zu sehr vielen vorzeitigen Ausstiegen 
-              - Trotz mehrfacher Anpassungen verschlechterte sich die Gesamtperformance im Backtest im Vergleich zur Variante mit **fixen Stop Loss**.
+- Trotz mehrfacher Anpassungen verschlechterte sich die Gesamtperformance im Backtest im Vergleich zur Variante mit **fixen Stop Loss**.
 - **Ergebnis**: Der Trailing Stop Loss wurde nach mehreren Experimenten wieder entfernt, da er die Performance verschlechtert hat.
+
+
+
+## Deployment Ergebnisse
+
+- Für das Deployment wurden getrennte Alpaca-Paper-Accounts verwendet – einen für das FFNN-Modell und einen für das LSTM-Modell.
+- Es wird eine Long-Only-Strategie mit Market-Entry und angeschlossenem Take-Profit / Stop-Loss (Bracket-Orders) sowie einer maximalen Haltedauer eingesetzt.
+- Die Ergebnisse basieren auf den **alten** Backtesting-Parametern | Die **neuen** Parameter aus dem aktuellen Backtest sind noch nicht im Deployment aktiv.
+
+
+### LSTM-Account 
+
+- Zeitraum: 2. Januar 2026 bis 12. Januar 2026
+<img width="994" height="676" alt="image" src="https://github.com/user-attachments/assets/2d706dae-01cb-40e5-94c2-a7ca19a1ef45" />
+→ realisierter Gewinn von +0,32 % über den Beobachtungszeitraum.
+
+- Im Backtest erzielt das LSTM-Modell mit den alten Parametern einen Profit von +3,4% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,32 % in 1 Woche.
+
+
+### FFNN-Account 
+
+- Zeitraum: 29. Dezember 2025 bis 12. Januar 2026
+<img width="982" height="669" alt="image" src="https://github.com/user-attachments/assets/d9f15987-4777-4149-ab14-fdb3a4526ebf" />
+→ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum.
+
+- Im Backtest erzielt das FFNN-Modell mit den alten Parametern einen Profit von +5,9% in 11 Monaten. Das Live-Paper-Trading kommt bisher auf +0,08 % in 2 Wochen.
 
