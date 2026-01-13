@@ -686,6 +686,11 @@ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum | Im Backtest erz
 ### LSTM-Account
 
 - Zeitraum: 02.01.2026 – 12.01.2026
+  - AAPL: 260,25 / 272,26 ≈ −4,41 %
+  - AMZN: 246,73 / 231,34 ≈ +6,65 %
+  - NVDA: 184,94 / 188,85 ≈ −2,07 %
+  - TSLA: 448,96 / 457,80 ≈ −1,93 %
+  - META: 641,97 / 662,73 ≈ −3,13 %
 
 - Buy and Hold Strategie: -978,5 $
 
@@ -716,6 +721,11 @@ realisierter Gewinn von +0,08 % über den Beobachtungszeitraum | Im Backtest erz
 ### FFNN-Account
 
 - Zeitraum: 29.12.2025 – 12.01.2026
+  - AAPL: 260,25 / 272,69 ≈ −4,56 %
+  - AMZN: 246,73 / 231,94 ≈ +6,38 %
+  - NVDA: 184,94 / 187,71 ≈ −1,48 %
+  - TSLA: 448,96 / 469,00 ≈ −4,27 %
+  - META: 641,97 / 658,01 ≈ −2,44 %
 
 - Buy and Hold Strategie: **-1274 $**
 
