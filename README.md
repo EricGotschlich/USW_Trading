@@ -604,9 +604,9 @@ Um die Handelslogik besser an das Verhalten der Modelle anzupassen, wurden die B
 
 - `Exit-Signal`: -0.0003
 
-- `Take-Profit`: **+0,35%**
+- `Take-Profit`: **+0.36%**
 
-- `Stop-Loss`: **-0,2%**
+- `Stop-Loss`: **-0.2%**
 
 - `Max. Haltedauer`: **10 Minuten**
 
@@ -615,20 +615,20 @@ Um die Handelslogik besser an das Verhalten der Modelle anzupassen, wurden die B
 
 ### Backtesting Plot Equity FFNN (Ausgangskonfiguration)
 <img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/b3406a9f-7c58-4b6d-94aa-09fb3ea5d8fb" />
-`total return`: 5.9% | `win rate`: 38.673% | `avg trade`: 0.018% | `median trade`: -0.110%
+total return: 5.9% | win rate: 38.673% | avg trade: 0.018% | median trade: -0.110%
 
 ### Backtesting Plot Equity FFNN (Neue Konfiguration)
-<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/53d6093c-03b2-4ae9-8310-26fb027eeb1f" />
-`total return`: 8.6% | `win rate`: 42.3% | `avg trade`: 0.018 % | `median trade`: −0.084 %
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/6e9e7213-6f4c-4212-a910-5c49391e86fe" />
+total return: 8.8% | win rate: 42.4% | avg trade: 0.018 % | median trade: −0.084 %
 
 
 ### Backtesting Plot Equity LSTM (Ausgangskonfiguration)
 <img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/3d05ff5a-0e0e-4591-8ea1-749eabb946ec" />
-`total return`: 3.387% | `win rate`: 37.9% | `avg trade`: 0.007% | `median trade`: -0.084%
+total return: 3.4% | win rate: 37.9% | avg trade: 0.007% | median trade: -0.084%
 
 ### Backtesting Plot Equity LSTM (Neue Konfiguration)
-<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/184a16ad-af3f-4fac-9475-d071ca61bb87" />
-`total return`: 9.5% | `win rate`: 41.8% | `avg trade`: 0.019% | `median trade`: −0.066 %
+<img width="2600" height="1000" alt="image" src="https://github.com/user-attachments/assets/8d3935c6-bc29-4e77-b6bc-787ca65094fa" />
+total return: 10.3% | win rate: 42% | avg trade: 0.02% | median trade: −0.066 %
 
 
 ### Vergleich & Interpretation
@@ -636,7 +636,25 @@ Um die Handelslogik besser an das Verhalten der Modelle anzupassen, wurden die B
 - Durch die Senkung von `Entry-Signal`, `Cooldown`, `Take Profit` und `Max. Haltedauer` handeln beide Modelle häufiger, was zu mehr Gewinn führt.
 
 - Die Gesamtrendite steigt deutlich gegenüber der ursprünglichen Konfiguration:
-  – FFNN: von 5,9% auf 8.7%
-  – LSTM: von 3,4% auf 9.5%
+  – FFNN: von 5.9% auf 8.8%
+  – LSTM: von 3.4% auf 10.3%
 
-- Die Win-Rate verbessert sich von ~38% auf ~42 % 
+- Die `Win-Rate` verbessert sich von ~38% auf ~42 %
+
+
+### Verworfene Strategien
+
+#### 1. Short-Positionen
+
+- **Idee**: Zusätzlich zu Long-Trades auch Short-Trades zulassen, wenn das Modell ein deutlich negatives Signal liefert
+          - Die Anzahl der Trades steigt deutlich
+- **Ergebnis**: Shorting hatte einen klar negativen Einfluss auf die Strategiequalität
+
+  
+#### 2. Trailing Stop Loss
+
+- **Idee**: Statt eines festen Stop-Loss sollte ein **dynamischer Trailing Stop** eingesetzt werden
+- **Probleme**: Der **Trailing Stop** führte durch die hohe Markt-Noise zu sehr vielen vorzeitigen Ausstiegen 
+              - Trotz mehrfacher Anpassungen verschlechterte sich die Gesamtperformance im Backtest im Vergleich zur Variante mit **fixen Stop Loss**.
+- **Ergebnis**: Der Trailing Stop Loss wurde nach mehreren Experimenten wieder entfernt, da er die Performance verschlechtert hat.
+
